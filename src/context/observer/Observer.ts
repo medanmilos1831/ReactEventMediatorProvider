@@ -1,4 +1,4 @@
-import { IObserver } from '../context/types';
+import { IObserver } from '../types';
 
 export class Observer extends EventTarget implements IObserver {
   constructor() {
@@ -10,7 +10,7 @@ export class Observer extends EventTarget implements IObserver {
     });
     this.dispatchEvent(target);
   };
-  subscribe(event: string, setPayload: any) {
+  subscribe(event: string, setPayload: Function) {
     let listener = (e: any) => {
       setPayload(e.detail);
     };

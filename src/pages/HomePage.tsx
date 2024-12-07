@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EventBusProvider, useNotify } from '../context';
+import { EventMediorProvider, useNotify } from '../context';
 import { Col, Modal, Row } from 'antd';
 import { PersonModal } from '../modals/PersonModal';
 import { CompanyModal } from '../modals/CompanyModal';
@@ -8,11 +8,10 @@ import { SideBar, TableWrapper } from '../components';
 const HomePage = () => {
   const emit = useNotify();
   const [counter, setCounter] = useState(0);
-  console.log('HOME PAGE RENDER');
   return (
     <>
       <h1>HomePage</h1>
-      <EventBusProvider.Subscriber event="personModal">
+      <EventMediorProvider.Subscriber event="personModal">
         {({ payload, event }) => {
           return (
             <Modal
@@ -32,10 +31,9 @@ const HomePage = () => {
             </Modal>
           );
         }}
-      </EventBusProvider.Subscriber>
-      <EventBusProvider.Subscriber event="companyModal">
+      </EventMediorProvider.Subscriber>
+      <EventMediorProvider.Subscriber event="companyModal">
         {({ payload }) => {
-          console.log('companyModal RENDER');
           return (
             <Modal
               open={payload?.open}
@@ -49,7 +47,7 @@ const HomePage = () => {
             </Modal>
           );
         }}
-      </EventBusProvider.Subscriber>
+      </EventMediorProvider.Subscriber>
       <button
         onClick={() => {
           emit('personModal', {

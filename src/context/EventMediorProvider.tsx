@@ -5,29 +5,30 @@ import {
   useRef,
   useState,
 } from 'react';
-import { EventBusContext } from './EventBusContext';
-import { Observer } from '../observer';
 
-const EventBusProvider = ({ children }: PropsWithChildren) => {
+import { Observer } from './observer';
+import { EventMediorContext } from './EventMediorContext';
+
+const EventMediorProvider = ({ children }: PropsWithChildren) => {
   const [observer, _] = useState(init);
   function init() {
     return new Observer();
   }
   return (
-    <EventBusContext.Provider value={observer}>
+    <EventMediorContext.Provider value={observer}>
       {children}
-    </EventBusContext.Provider>
+    </EventMediorContext.Provider>
   );
 };
 
-EventBusProvider.Subscriber = ({
+EventMediorProvider.Subscriber = ({
   event,
   children,
 }: {
   event: string;
   children: ({ payload, event }: any) => JSX.Element;
 }) => {
-  const observer = useContext(EventBusContext)!;
+  const observer = useContext(EventMediorContext)!;
   const init = useRef<boolean | (() => void)>(false);
   const [payload, setPayload] = useState<any>(undefined);
   if (init.current === false) {
@@ -49,12 +50,12 @@ EventBusProvider.Subscriber = ({
 };
 
 function useNotify() {
-  const observer = useContext(EventBusContext)!;
+  const observer = useContext(EventMediorContext)!;
   return observer.notify;
 }
 
 function useSubscribe(event: string, callback: Function) {
-  const observer = useContext(EventBusContext)!;
+  const observer = useContext(EventMediorContext)!;
   useEffect(() => {
     let unsubscirbe = observer.subscribe(event, callback);
     return () => {
@@ -64,4 +65,4 @@ function useSubscribe(event: string, callback: Function) {
   return observer.notify;
 }
 
-export { EventBusProvider, useNotify, useSubscribe };
+export { EventMediorProvider, useNotify, useSubscribe };

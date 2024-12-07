@@ -1,1 +1,5 @@
-export { EventBusProvider, useNotify, useSubscribe } from './EventBusProvider';
+export {
+  EventMediorProvider,
+  useNotify,
+  useSubscribe,
+} from './EventMediorProvider';

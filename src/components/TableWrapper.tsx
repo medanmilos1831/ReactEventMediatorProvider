@@ -1,21 +1,44 @@
 import React, { useState } from 'react';
 import { useSubscribe } from '../context';
+import { Table } from 'antd';
 
 export const TableWrapper = () => {
-  const [counter, setCounter] = useState(0);
-  useSubscribe('pera', (data: any) => {
-    console.log('eeee', data, counter);
-  });
+  const dataSource = [
+    {
+      key: '1',
+      name: 'Mike',
+      age: 32,
+      address: '10 Downing Street',
+    },
+    {
+      key: '2',
+      name: 'John',
+      age: 42,
+      address: '10 Downing Street',
+    },
+  ];
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+  ];
+
   return (
     <div>
-      <h2>TableWrapper</h2>
-      <button
-        onClick={() => {
-          setCounter((prev) => prev + 1);
-        }}
-      >
-        table wrapper render {counter}
-      </button>
+      <Table dataSource={dataSource} columns={columns} />;
     </div>
   );
 };

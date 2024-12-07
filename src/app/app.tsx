@@ -1,10 +1,10 @@
-import { EventBusProvider } from '../context';
+import { EventMediorProvider } from '../context';
 import { HomePage } from '../pages/HomePage';
 
 export function App() {
   return (
-    <EventBusProvider>
+    <EventMediorProvider>
       <HomePage />
-    </EventBusProvider>
+    </EventMediorProvider>
   );
 }

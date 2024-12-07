@@ -1,4 +1,6 @@
+import React from 'react';
+
 export const PersonModal = (props: any) => {
-  // console.log('props', props);
+  console.log('PROPS', props);
   return <div>PersonModal</div>;
 };
