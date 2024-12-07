@@ -12,7 +12,9 @@ const HomePage = () => {
     <>
       <h1>HomePage</h1>
       <EventMediorProvider.Subscriber event="personModal">
-        {({ payload, event }) => {
+        {({ payload, event, prev }) => {
+          console.log('payload', payload);
+          console.log('prev', prev);
           return (
             <Modal
               open={payload?.open}

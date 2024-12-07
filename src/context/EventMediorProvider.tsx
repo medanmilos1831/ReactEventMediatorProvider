@@ -26,14 +26,19 @@ EventMediorProvider.Subscriber = ({
   children,
 }: {
   event: string;
-  children: ({ payload, event }: any) => JSX.Element;
+  children: ({ payload, event, prev }: any) => JSX.Element;
 }) => {
   const observer = useContext(EventMediorContext)!;
   const init = useRef<boolean | (() => void)>(false);
   const [payload, setPayload] = useState<any>(undefined);
+  const prev = useRef<any>(undefined);
   if (init.current === false) {
     init.current = observer.subscribe(event, setPayload);
   }
+
+  useEffect(() => {
+    prev.current = payload;
+  }, [payload]);
   useEffect(() => {
     return () => {
       (init.current as () => void)();
@@ -44,6 +49,7 @@ EventMediorProvider.Subscriber = ({
       {children({
         payload,
         event,
+        prev: prev.current,
       })}
     </>
   );
