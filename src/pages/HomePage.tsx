@@ -13,15 +13,16 @@ const HomePage = () => {
       <h1>HomePage</h1>
       <EventMediorProvider.Subscriber
         event="personModal"
-        shouldUpdate={(param) => {
-          console.log('param', param);
-          if (param.open === true) {
-            return true;
-          }
-          return false;
-        }}
+        // shouldUpdate={(param) => {
+        //   console.log('param', param);
+        //   if (param.open === true) {
+        //     return true;
+        //   }
+        //   return false;
+        // }}
       >
         {({ payload, event }) => {
+          console.log('payload', payload);
           return (
             <Modal
               open={payload?.open}

@@ -10,7 +10,11 @@ export class Observer extends EventTarget implements IObserver {
     });
     this.dispatchEvent(target);
   };
-  subscribe(event: string, callback: Function, shouldUpdate: shouldUpdateType) {
+  subscribe(
+    event: string,
+    callback: (payload: any) => void,
+    shouldUpdate: shouldUpdateType
+  ) {
     let listener = (e: any) => {
       if (typeof shouldUpdate === 'boolean' && shouldUpdate) {
         callback(e.detail);
