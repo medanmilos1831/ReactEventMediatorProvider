@@ -11,18 +11,8 @@ const HomePage = () => {
   return (
     <>
       <h1>HomePage</h1>
-      <EventMediorProvider.Subscriber
-        event="personModal"
-        // shouldUpdate={(param) => {
-        //   console.log('param', param);
-        //   if (param.open === true) {
-        //     return true;
-        //   }
-        //   return false;
-        // }}
-      >
+      <EventMediorProvider.Subscriber event={['personModal', 'companyModal']}>
         {({ payload, event }) => {
-          console.log('payload', payload);
           return (
             <Modal
               open={payload?.open}
@@ -42,7 +32,7 @@ const HomePage = () => {
           );
         }}
       </EventMediorProvider.Subscriber>
-      <EventMediorProvider.Subscriber event="companyModal">
+      {/* <EventMediorProvider.Subscriber event={['companyModal']}>
         {({ payload }) => {
           return (
             <Modal
@@ -57,7 +47,7 @@ const HomePage = () => {
             </Modal>
           );
         }}
-      </EventMediorProvider.Subscriber>
+      </EventMediorProvider.Subscriber> */}
       <button
         onClick={() => {
           emit('personModal', {

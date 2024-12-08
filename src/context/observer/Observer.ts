@@ -6,7 +6,10 @@ export class Observer extends EventTarget implements IObserver {
   }
   notify = (event: string, payload: any) => {
     const target = new CustomEvent(event, {
-      detail: payload,
+      detail: {
+        payload,
+        event,
+      },
     });
     this.dispatchEvent(target);
   };

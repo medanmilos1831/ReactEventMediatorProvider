@@ -27,35 +27,47 @@ EventMediorProvider.Subscriber = ({
   children,
   shouldUpdate = true,
 }: {
-  event: string;
+  event: string[];
   children: ({ payload, event }: any) => JSX.Element;
   shouldUpdate?: shouldUpdateType;
 }) => {
   const observer = useContext(EventMediorContext)!;
-  const init = useRef<boolean | (() => void)>(false);
+  const init = useRef<(boolean | (() => void))[]>(
+    Array(event.length).fill(false)
+  );
   const [_, render] = useState<number>(0);
-  const payload = useRef<any>(undefined);
-  if (init.current === false) {
-    init.current = observer.subscribe(
-      event,
-      (eventDetail: any) => {
-        payload.current = eventDetail;
-        render((prev) => prev + 1);
-      },
-      shouldUpdate
-    );
-  }
+  const payload = useRef<any>({
+    payload: undefined,
+    event: undefined,
+  });
+  const activeEvent = useRef<any>(undefined);
+  event.forEach((event, index) => {
+    if (init.current[index] === false) {
+      init.current[index] = observer.subscribe(
+        event,
+        (eventDetail: any) => {
+          payload.current = {
+            ...payload.current,
+            ...eventDetail,
+          };
+          render((prev) => prev + 1);
+        },
+        shouldUpdate
+      );
+    }
+  });
 
   useEffect(() => {
     return () => {
-      (init.current as () => void)();
+      init.current.forEach((item) => {
+        (item as () => void)();
+      });
     };
   }, []);
   return (
     <>
       {children({
-        payload: payload.current,
-        event,
+        ...payload.current,
       })}
     </>
   );
