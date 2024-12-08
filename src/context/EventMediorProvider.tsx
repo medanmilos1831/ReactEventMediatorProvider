@@ -8,6 +8,7 @@ import {
 
 import { Observer } from './observer';
 import { EventMediorContext } from './EventMediorContext';
+import { shouldUpdateType } from './types';
 
 const EventMediorProvider = ({ children }: PropsWithChildren) => {
   const [observer, _] = useState(init);
@@ -24,21 +25,19 @@ const EventMediorProvider = ({ children }: PropsWithChildren) => {
 EventMediorProvider.Subscriber = ({
   event,
   children,
+  shouldUpdate = true,
 }: {
   event: string;
-  children: ({ payload, event, prev }: any) => JSX.Element;
+  children: ({ payload, event }: any) => JSX.Element;
+  shouldUpdate?: shouldUpdateType;
 }) => {
   const observer = useContext(EventMediorContext)!;
   const init = useRef<boolean | (() => void)>(false);
   const [payload, setPayload] = useState<any>(undefined);
-  const prev = useRef<any>(undefined);
   if (init.current === false) {
-    init.current = observer.subscribe(event, setPayload);
+    init.current = observer.subscribe(event, setPayload, shouldUpdate);
   }
 
-  useEffect(() => {
-    prev.current = payload;
-  }, [payload]);
   useEffect(() => {
     return () => {
       (init.current as () => void)();
@@ -49,7 +48,6 @@ EventMediorProvider.Subscriber = ({
       {children({
         payload,
         event,
-        prev: prev.current,
       })}
     </>
   );
@@ -63,7 +61,7 @@ function useNotify() {
 function useSubscribe(event: string, callback: Function) {
   const observer = useContext(EventMediorContext)!;
   useEffect(() => {
-    let unsubscirbe = observer.subscribe(event, callback);
+    let unsubscirbe = observer.subscribe(event, callback, true);
     return () => {
       unsubscirbe();
     };

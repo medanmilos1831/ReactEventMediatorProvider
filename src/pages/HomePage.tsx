@@ -11,10 +11,17 @@ const HomePage = () => {
   return (
     <>
       <h1>HomePage</h1>
-      <EventMediorProvider.Subscriber event="personModal">
-        {({ payload, event, prev }) => {
-          console.log('payload', payload);
-          console.log('prev', prev);
+      <EventMediorProvider.Subscriber
+        event="personModal"
+        shouldUpdate={(param) => {
+          console.log('param', param);
+          if (param.open === true) {
+            return true;
+          }
+          return false;
+        }}
+      >
+        {({ payload, event }) => {
           return (
             <Modal
               open={payload?.open}

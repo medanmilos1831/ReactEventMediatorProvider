@@ -1,4 +1,4 @@
-import { IObserver } from '../types';
+import { IObserver, shouldUpdateType } from '../types';
 
 export class Observer extends EventTarget implements IObserver {
   constructor() {
@@ -10,9 +10,15 @@ export class Observer extends EventTarget implements IObserver {
     });
     this.dispatchEvent(target);
   };
-  subscribe(event: string, setPayload: Function) {
+  subscribe(event: string, callback: Function, shouldUpdate: shouldUpdateType) {
     let listener = (e: any) => {
-      setPayload(e.detail);
+      if (typeof shouldUpdate === 'boolean' && shouldUpdate) {
+        callback(e.detail);
+        return;
+      }
+      if (typeof shouldUpdate === 'function' && shouldUpdate(e.detail)) {
+        callback(e.detail);
+      }
     };
     this.addEventListener(event, listener);
     return () => {
