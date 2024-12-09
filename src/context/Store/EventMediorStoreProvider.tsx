@@ -2,7 +2,7 @@ import { PropsWithChildren, useContext, useState } from 'react';
 import { EventMediorStoreContext } from './EventMediorStoreContext';
 import { ModuleType } from '../types';
 import { Store } from './Store';
-import { useSubscribe } from '../EventMediorProvider';
+import { useNotify, useSubscribe } from '../EventMediorProvider';
 
 function EventMediorStoreProvider<T extends ModuleType<any>[]>({
   children,
@@ -26,19 +26,33 @@ const useGetState = ({
 }: {
   moduleName: string;
   getter: string;
-  dep: string;
+  dep: string[];
 }) => {
   const { store } = useContext(EventMediorStoreContext);
-  const [state, setState] = useState(undefined);
-  useSubscribe(dep, () => {
-    console.log('hehhehehhehe');
+  const [_, setState] = useState(0);
+  useSubscribe(dep, (data: any) => {
+    setState((prev) => prev + 1);
   });
-  //   console.log('store', store);
-  const item = store[moduleName].getters[getter].call(store[moduleName].state);
-  console.log('item', item);
   return {
-    state,
+    state: store[moduleName].getters[getter].call(store[moduleName].state),
   };
 };
 
-export { EventMediorStoreProvider, useGetState };
+const useMutateState = () => {
+  const { store } = useContext(EventMediorStoreContext);
+  const emit = useNotify();
+  return (obj: {
+    event?: string;
+    payload: any;
+    moduleName: string;
+    mutation: string;
+  }) => {
+    const { moduleName, mutation, payload, event } = obj;
+    store[moduleName].mutation[mutation].call(store[moduleName].state, payload);
+    if (event) {
+      emit(event, undefined);
+    }
+  };
+};
+
+export { EventMediorStoreProvider, useGetState, useMutateState };

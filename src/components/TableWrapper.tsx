@@ -3,6 +3,9 @@ import { useSubscribe } from '../context';
 import { Table } from 'antd';
 
 export const TableWrapper = () => {
+  useSubscribe(['pera', 'zika'], (e: any) => {
+    console.log('pera', e);
+  });
   const dataSource = [
     {
       key: '1',

@@ -124,14 +124,19 @@ function useNotify() {
  * @param {Function} callback - Function to call with the event payload.
  * @returns {Function} The notify function for triggering events.
  */
-function useSubscribe(event: string, callback: Function) {
+function useSubscribe(events: string[], callback: Function) {
   const observer = useContext(EventMediorContext)!;
 
   useEffect(() => {
     // Subscribe to the event and receive the unsubscribe function.
-    let unsubscribe = observer.subscribe(event, callback, true);
+    let unsubscribe: (() => void)[] = [];
+    events.forEach((event) => {
+      unsubscribe.push(observer.subscribe(event, callback, true));
+    });
     return () => {
-      unsubscribe();
+      unsubscribe.forEach((item) => {
+        item();
+      });
     };
   });
 

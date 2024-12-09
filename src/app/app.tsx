@@ -20,14 +20,13 @@ export function App() {
               counter: 0,
             },
             mutation: {
-              inc() {
-                this;
+              inc(payload: any) {
+                this.counter = this.counter + payload;
               },
             },
             getters: {
               getCounter() {
-                console.log('counterModule', this.counter);
-                // this;
+                return this.counter;
               },
             },
           },
