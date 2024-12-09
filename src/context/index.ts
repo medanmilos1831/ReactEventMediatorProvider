@@ -3,3 +3,4 @@ export {
   useNotify,
   useSubscribe,
 } from './EventMediorProvider';
+export { EventMediorStoreProvider } from './Store';
