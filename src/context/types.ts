@@ -1,13 +1,22 @@
 export interface IObserver {
-  subscribe(
-    event: string,
-    callback: Function,
-    shouldUpdate: shouldUpdateType
-  ): () => void;
-  notify(event: string, payload: any): any;
+  subscribe(params: subscribeType): () => void;
+  notify(params: notifyType): any;
 }
 
 export type shouldUpdateType = boolean | ((payload: any) => boolean);
+
+export type subscribeType = {
+  event: string;
+  callback: Function;
+  shouldUpdate: shouldUpdateType;
+};
+export type notifyType = {
+  event: string;
+  payload: any;
+  config?: {
+    eventType: 'storeMutation' | 'eventSignal';
+  };
+};
 
 // STORE TYPES
 export interface ModuleType<T = unknown> {

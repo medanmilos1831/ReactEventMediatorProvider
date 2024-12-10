@@ -9,9 +9,16 @@ import { useMutateState } from '../context/Store/EventMediorStoreProvider';
 
 const HomePage = () => {
   const [counter, setCounter] = useState(0);
+  const emit = useNotify();
   const { state } = useGetState('counterModule/getCounter', {
     events: ['counterModule/inc', 'counterModule/dec'],
   });
+  useSubscribe(
+    (data: any) => {
+      console.log('dddd', data);
+    },
+    ['counterModule/inc']
+  );
   const dispatch = useMutateState();
   return (
     <>
@@ -32,6 +39,15 @@ const HomePage = () => {
         }}
       >
         dec
+      </button>
+      <button
+        onClick={() => {
+          emit('counterModule/inc', {
+            payload: 1,
+          });
+        }}
+      >
+        signal
       </button>
       {state && state}
     </>

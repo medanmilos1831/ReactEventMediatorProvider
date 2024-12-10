@@ -2,7 +2,8 @@ import { PropsWithChildren, useContext, useRef, useState } from 'react';
 import { EventMediorStoreContext } from './EventMediorStoreContext';
 import { ModuleType } from '../types';
 import { Store } from './Store';
-import { useNotify, useSubscribe } from '../EventMediorProvider';
+import { useSubscribe } from '../EventMediorProvider';
+import { EventMediorContext } from '../EventMediorContext';
 
 /**
  * React Provider for EventMediorStore.
@@ -85,9 +86,9 @@ const useGetState = (
   });
 
   // Subscribe to specified events and update state on event triggers
-  useSubscribe(events, () => {
+  useSubscribe(() => {
     setState((prev) => prev + 1); // Increment state to trigger re-render
-  });
+  }, events);
 
   const { moduleName, getter } = eventData.current;
 
@@ -106,8 +107,7 @@ const useGetState = (
  */
 const useMutateState = () => {
   const { store, parseSlash } = useContext(EventMediorStoreContext);
-  const emit = useNotify();
-
+  const observer = useContext(EventMediorContext)!;
   return (
     event: string,
     obj: {
@@ -123,7 +123,13 @@ const useMutateState = () => {
 
     // Emit the event if specified
     if (event) {
-      emit(event, undefined);
+      observer.notify({
+        event,
+        payload: undefined,
+        config: {
+          eventType: 'storeMutation',
+        },
+      });
     }
   };
 };

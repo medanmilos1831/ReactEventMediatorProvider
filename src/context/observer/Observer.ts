@@ -3,7 +3,12 @@
  * Extends the native `EventTarget` to manage events and subscribers.
  * Provides methods for notifying subscribers and handling conditional updates.
  */
-import { IObserver, shouldUpdateType } from '../types';
+import {
+  IObserver,
+  notifyType,
+  shouldUpdateType,
+  subscribeType,
+} from '../types';
 
 export class Observer extends EventTarget implements IObserver {
   constructor() {
@@ -17,11 +22,17 @@ export class Observer extends EventTarget implements IObserver {
    * @param {string} event - The name of the event to notify subscribers about.
    * @param {any} payload - The data to send to subscribers.
    */
-  notify = (event: string, payload: any) => {
+  // event: string,
+  //   payload: any,
+  //   config?: {
+  //     eventType: 'storeMutation' | 'eventSignal';
+  //   }
+  notify = ({ event, payload, config }: notifyType) => {
     const target = new CustomEvent(event, {
       detail: {
         payload, // The actual data to pass to subscribers.
         event, // The event name for contextual information.
+        config: config ?? {},
       },
     });
     this.dispatchEvent(target); // Emit the event to all listeners.
@@ -40,11 +51,7 @@ export class Observer extends EventTarget implements IObserver {
    *
    * @returns {() => void} A function to unsubscribe from the event.
    */
-  subscribe(
-    event: string,
-    callback: (payload: any) => void,
-    shouldUpdate: shouldUpdateType
-  ) {
+  subscribe({ event, callback, shouldUpdate }: subscribeType) {
     // Listener function that wraps the callback with the condition logic.
     let listener = (e: any) => {
       // If `shouldUpdate` is a boolean and true, execute the callback.

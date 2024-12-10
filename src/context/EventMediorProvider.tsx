@@ -71,9 +71,9 @@ EventMediorProvider.Subscriber = ({
   // Subscribe to events and handle updates.
   event.forEach((event, index) => {
     if (init.current[index] === false) {
-      init.current[index] = observer.subscribe(
+      init.current[index] = observer.subscribe({
         event,
-        (eventDetail: any) => {
+        callback: (eventDetail: any) => {
           // Update payload and trigger re-render.
           payload.current = {
             ...payload.current,
@@ -81,8 +81,8 @@ EventMediorProvider.Subscriber = ({
           };
           render((prev) => prev + 1);
         },
-        shouldUpdate
-      );
+        shouldUpdate,
+      });
     }
   });
 
@@ -112,7 +112,14 @@ EventMediorProvider.Subscriber = ({
  */
 function useNotify() {
   const observer = useContext(EventMediorContext)!;
-  return observer.notify;
+  return (event: string, payload: any) =>
+    observer.notify({
+      event,
+      payload,
+      config: {
+        eventType: 'eventSignal',
+      },
+    });
 }
 
 /**
@@ -124,14 +131,20 @@ function useNotify() {
  * @param {Function} callback - Function to call with the event payload.
  * @returns {Function} The notify function for triggering events.
  */
-function useSubscribe(events: string[], callback: Function) {
+function useSubscribe(callback: Function, events: string[]) {
   const observer = useContext(EventMediorContext)!;
 
   useEffect(() => {
     // Subscribe to the event and receive the unsubscribe function.
     let unsubscribe: (() => void)[] = [];
     events.forEach((event) => {
-      unsubscribe.push(observer.subscribe(event, callback, true));
+      unsubscribe.push(
+        observer.subscribe({
+          event,
+          callback,
+          shouldUpdate: true,
+        })
+      );
     });
     return () => {
       unsubscribe.forEach((item) => {
