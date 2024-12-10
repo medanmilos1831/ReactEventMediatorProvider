@@ -9,30 +9,31 @@ import { useMutateState } from '../context/Store/EventMediorStoreProvider';
 
 const HomePage = () => {
   const [counter, setCounter] = useState(0);
-  const { state } = useGetState({
-    moduleName: 'counterModule',
-    getter: 'getCounter',
-    dep: ['pera'],
+  const { state } = useGetState('counterModule/getCounter', {
+    events: ['counterModule/inc', 'counterModule/dec'],
   });
-  const dis = useMutateState();
   console.log('state', state);
-  // const emit = useNotify();
+  const dispatch = useMutateState();
   return (
     <>
-      {/* dasdaasdas */}
       <button
         onClick={() => {
-          dis({
-            event: 'pera',
-            moduleName: 'counterModule',
-            mutation: 'inc',
+          dispatch('counterModule/inc', {
             payload: 1,
           });
         }}
       >
-        clik
+        inc
       </button>
-      {/* <TableWrapper /> */}
+      <button
+        onClick={() => {
+          dispatch('counterModule/dec', {
+            payload: 1,
+          });
+        }}
+      >
+        dec
+      </button>
     </>
   );
 };

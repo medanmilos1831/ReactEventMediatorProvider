@@ -5,9 +5,6 @@ import { HomePage } from '../pages/HomePage';
 interface ICounter {
   counter: number;
 }
-interface IPerson {
-  fname: string;
-}
 
 export function App() {
   return (
@@ -22,6 +19,9 @@ export function App() {
             mutation: {
               inc(payload: any) {
                 this.counter = this.counter + payload;
+              },
+              dec(payload: any) {
+                this.counter = this.counter - payload;
               },
             },
             getters: {
