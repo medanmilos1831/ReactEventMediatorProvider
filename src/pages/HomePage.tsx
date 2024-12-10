@@ -10,21 +10,38 @@ import { useMutateState } from '../context/Store/EventMediorStoreProvider';
 const HomePage = () => {
   const [counter, setCounter] = useState(0);
   const emit = useNotify();
+  const dispatch = useMutateState();
   const { state } = useGetState('counterModule/getCounter', {
     events: ['counterModule/inc', 'counterModule/dec'],
   });
-  useSubscribe(
-    (data: any) => {
-      console.log('dddd', data);
-    },
-    ['counterModule/inc']
-  );
-  const dispatch = useMutateState();
+  useSubscribe((data) => {}, ['counterModule/inc']);
   return (
     <>
+      <EventMediorProvider.Subscriber
+        event={['counterModule/inc', 'counterModule/dec', 'zika']}
+        shouldUpdate={false}
+      >
+        {({ event, payload, config }) => {
+          return <>pera</>;
+        }}
+      </EventMediorProvider.Subscriber>
       <button
         onClick={() => {
-          dispatch('counterModule/inc', {
+          emit({
+            event: 'pera',
+            payload: 'ovo je neki payload',
+            // config: {
+            //   eventType: 'pera',
+            // },
+          });
+        }}
+      >
+        rise pera event
+      </button>
+      <button
+        onClick={() => {
+          dispatch({
+            event: 'counterModule/inc',
             payload: 1,
           });
         }}
@@ -33,7 +50,8 @@ const HomePage = () => {
       </button>
       <button
         onClick={() => {
-          dispatch('counterModule/dec', {
+          dispatch({
+            event: 'counterModule/dec',
             payload: 1,
           });
         }}
@@ -42,14 +60,15 @@ const HomePage = () => {
       </button>
       <button
         onClick={() => {
-          emit('counterModule/inc', {
+          emit({
+            event: 'zika',
             payload: 1,
           });
         }}
       >
         signal
       </button>
-      {state && state}
+      {/* {state && state} */}
     </>
   );
 };

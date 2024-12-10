@@ -5,7 +5,7 @@
  */
 import {
   IObserver,
-  notifyType,
+  eventDetail,
   shouldUpdateType,
   subscribeType,
 } from '../types';
@@ -27,13 +27,13 @@ export class Observer extends EventTarget implements IObserver {
   //   config?: {
   //     eventType: 'storeMutation' | 'eventSignal';
   //   }
-  notify = ({ event, payload, config }: notifyType) => {
-    const target = new CustomEvent(event, {
-      detail: {
-        payload, // The actual data to pass to subscribers.
-        event, // The event name for contextual information.
-        config: config ?? {},
-      },
+  notify = (eventDetail: eventDetail) => {
+    if (!eventDetail.event) {
+      console.error('Event name is undefined!');
+      return;
+    }
+    const target = new CustomEvent(eventDetail.event, {
+      detail: eventDetail,
     });
     this.dispatchEvent(target); // Emit the event to all listeners.
   };
@@ -53,15 +53,16 @@ export class Observer extends EventTarget implements IObserver {
    */
   subscribe({ event, callback, shouldUpdate }: subscribeType) {
     // Listener function that wraps the callback with the condition logic.
-    let listener = (e: any) => {
+    let listener = (event: any) => {
+      let eventDetail = event.detail as eventDetail;
       // If `shouldUpdate` is a boolean and true, execute the callback.
       if (typeof shouldUpdate === 'boolean' && shouldUpdate) {
-        callback(e.detail); // `e.detail` contains event data and payload.
+        callback(eventDetail); // `e.detail` contains event data and payload.
         return;
       }
       // If `shouldUpdate` is a function, evaluate the condition.
-      if (typeof shouldUpdate === 'function' && shouldUpdate(e.detail)) {
-        callback(e.detail);
+      if (typeof shouldUpdate === 'function' && shouldUpdate(eventDetail)) {
+        callback(eventDetail);
       }
     };
 

@@ -8,7 +8,7 @@ import {
 
 import { Observer } from './observer';
 import { EventMediorContext } from './EventMediorContext';
-import { shouldUpdateType } from './types';
+import { eventDetail, EVENTS_TYPE, notify, shouldUpdateType } from './types';
 
 /**
  * EventMediorProvider component.
@@ -49,7 +49,7 @@ EventMediorProvider.Subscriber = ({
   shouldUpdate = true,
 }: {
   event: string[];
-  children: ({ payload, event }: any) => JSX.Element;
+  children: (params: eventDetail) => JSX.Element;
   shouldUpdate?: shouldUpdateType;
 }) => {
   const observer = useContext(EventMediorContext)!;
@@ -63,9 +63,10 @@ EventMediorProvider.Subscriber = ({
   const [_, render] = useState<number>(0);
 
   // Reference to hold the latest event payload.
-  const payload = useRef<any>({
+  const payload = useRef<eventDetail>({
     payload: undefined,
     event: undefined,
+    config: undefined,
   });
 
   // Subscribe to events and handle updates.
@@ -73,12 +74,9 @@ EventMediorProvider.Subscriber = ({
     if (init.current[index] === false) {
       init.current[index] = observer.subscribe({
         event,
-        callback: (eventDetail: any) => {
+        callback: (eventDetail: eventDetail) => {
           // Update payload and trigger re-render.
-          payload.current = {
-            ...payload.current,
-            ...eventDetail,
-          };
+          payload.current = eventDetail;
           render((prev) => prev + 1);
         },
         shouldUpdate,
@@ -95,13 +93,7 @@ EventMediorProvider.Subscriber = ({
     };
   }, []);
 
-  return (
-    <>
-      {children({
-        ...payload.current,
-      })}
-    </>
-  );
+  return <>{children(payload.current)}</>;
 };
 
 /**
@@ -112,14 +104,17 @@ EventMediorProvider.Subscriber = ({
  */
 function useNotify() {
   const observer = useContext(EventMediorContext)!;
-  return (event: string, payload: any) =>
+  return ({ event, payload, config }: notify) => {
     observer.notify({
       event,
       payload,
-      config: {
-        eventType: 'eventSignal',
-      },
+      config: config
+        ? config
+        : {
+            eventType: EVENTS_TYPE.SIGNAL_EVENT,
+          },
     });
+  };
 }
 
 /**
@@ -131,7 +126,10 @@ function useNotify() {
  * @param {Function} callback - Function to call with the event payload.
  * @returns {Function} The notify function for triggering events.
  */
-function useSubscribe(callback: Function, events: string[]) {
+function useSubscribe(
+  callback: (params: eventDetail) => void,
+  events: string[]
+) {
   const observer = useContext(EventMediorContext)!;
 
   useEffect(() => {

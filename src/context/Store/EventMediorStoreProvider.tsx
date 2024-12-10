@@ -1,6 +1,6 @@
 import { PropsWithChildren, useContext, useRef, useState } from 'react';
 import { EventMediorStoreContext } from './EventMediorStoreContext';
-import { ModuleType } from '../types';
+import { EVENTS_TYPE, ModuleType } from '../types';
 import { Store } from './Store';
 import { useSubscribe } from '../EventMediorProvider';
 import { EventMediorContext } from '../EventMediorContext';
@@ -108,15 +108,10 @@ const useGetState = (
 const useMutateState = () => {
   const { store, parseSlash } = useContext(EventMediorStoreContext);
   const observer = useContext(EventMediorContext)!;
-  return (
-    event: string,
-    obj: {
-      payload: any;
-    }
-  ) => {
+  return (params: { event: string; payload: any }) => {
+    const { event, payload } = params;
     // Parse the event into moduleName and mutation
     const { moduleName, item: mutation } = parseSlash(event);
-    const { payload } = obj;
 
     // Perform the mutation on the module's state
     store[moduleName].mutation[mutation].call(store[moduleName].state, payload);
@@ -125,9 +120,9 @@ const useMutateState = () => {
     if (event) {
       observer.notify({
         event,
-        payload: undefined,
+        payload,
         config: {
-          eventType: 'storeMutation',
+          eventType: EVENTS_TYPE.STORE_MUTATION_EVENT,
         },
       });
     }
