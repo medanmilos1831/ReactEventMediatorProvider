@@ -27,7 +27,7 @@ const useGetState = (
     events: string[];
   }
 ) => {
-  const { store } = useContext(EventMediorStoreContext);
+  const { store, parseSlash } = useContext(EventMediorStoreContext);
   const [_, setState] = useState(0);
   const eventData = useRef<{
     moduleName: string | undefined;
@@ -37,9 +37,7 @@ const useGetState = (
     getter: undefined,
   });
   useSubscribe(events, () => {
-    const parts = target.split('/');
-    const moduleName = parts[0];
-    const getter = parts[1];
+    const { moduleName, item: getter } = parseSlash(target);
     eventData.current = {
       ...eventData.current,
       moduleName,
@@ -57,7 +55,7 @@ const useGetState = (
 };
 
 const useMutateState = () => {
-  const { store } = useContext(EventMediorStoreContext);
+  const { store, parseSlash } = useContext(EventMediorStoreContext);
   const emit = useNotify();
   return (
     event: string,
@@ -65,9 +63,7 @@ const useMutateState = () => {
       payload: any;
     }
   ) => {
-    const parts = event.split('/');
-    const moduleName = parts[0];
-    const mutation = parts[1];
+    const { moduleName, item: mutation } = parseSlash(event);
     const { payload } = obj;
     store[moduleName].mutation[mutation].call(store[moduleName].state, payload);
 
