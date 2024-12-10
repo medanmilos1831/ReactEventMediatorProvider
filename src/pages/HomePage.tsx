@@ -1,94 +1,74 @@
 import { useState } from 'react';
-import { EventMediorProvider, useNotify } from '../context';
+import { EventMediorProvider, useNotify, useSubscribe } from '../context';
 import { Col, Modal, Row } from 'antd';
 import { PersonModal } from '../modals/PersonModal';
 import { CompanyModal } from '../modals/CompanyModal';
 import { SideBar, TableWrapper } from '../components';
+import { useGetState } from '../context/Store';
+import { useMutateState } from '../context/Store/EventMediorStoreProvider';
 
 const HomePage = () => {
-  const emit = useNotify();
   const [counter, setCounter] = useState(0);
+  const emit = useNotify();
+  const dispatch = useMutateState();
+  const { state } = useGetState('counterModule/getCounter', {
+    events: ['counterModule/inc', 'counterModule/dec'],
+  });
+  useSubscribe((data) => {}, ['counterModule/inc']);
   return (
     <>
-      <h1>HomePage</h1>
-      <EventMediorProvider.Subscriber event={['personModal', 'companyModal']}>
-        {({ payload, event }) => {
-          return (
-            <Modal
-              open={payload?.open}
-              onCancel={() => {
-                emit(event, {
-                  open: false,
-                });
-              }}
-              onOk={() => {
-                emit('companyModal', {
-                  open: true,
-                });
-              }}
-            >
-              <PersonModal {...(payload?.props ?? {})} />
-            </Modal>
-          );
+      <EventMediorProvider.Subscriber
+        event={['counterModule/inc', 'counterModule/dec', 'zika']}
+        shouldUpdate={false}
+      >
+        {({ event, payload, config }) => {
+          return <>pera</>;
         }}
       </EventMediorProvider.Subscriber>
-      {/* <EventMediorProvider.Subscriber event={['companyModal']}>
-        {({ payload }) => {
-          return (
-            <Modal
-              open={payload?.open}
-              onCancel={() => {
-                emit('companyModal', {
-                  open: false,
-                });
-              }}
-            >
-              <CompanyModal {...(payload?.props ?? {})} />
-            </Modal>
-          );
-        }}
-      </EventMediorProvider.Subscriber> */}
       <button
         onClick={() => {
-          emit('personModal', {
-            open: true,
-            props: {
-              fname: 'Milos',
-            },
+          emit({
+            event: 'pera',
+            payload: 'ovo je neki payload',
+            // config: {
+            //   eventType: 'pera',
+            // },
           });
         }}
       >
-        OPEN PERSON MODAL
+        rise pera event
       </button>
-
       <button
         onClick={() => {
-          emit('companyModal', {
-            open: true,
-            props: {
-              companyName: 'Sony',
-            },
+          dispatch({
+            event: 'counterModule/inc',
+            payload: 1,
           });
         }}
       >
-        OPEN COMPANY MODAL
+        inc
       </button>
-
       <button
         onClick={() => {
-          setCounter((prev) => prev + 1);
+          dispatch({
+            event: 'counterModule/dec',
+            payload: 1,
+          });
         }}
       >
-        counter {counter}
+        dec
       </button>
-      <Row>
-        <Col span={4}>
-          <SideBar />
-        </Col>
-        <Col span={20}>
-          <TableWrapper />
-        </Col>
-      </Row>
+      <button
+        onClick={() => {
+          emit({
+            event: 'zika',
+            payload: 1,
+          });
+        }}
+      >
+        signal
+      </button>
+      {/* {state && state} */}
     </>
   );
 };
