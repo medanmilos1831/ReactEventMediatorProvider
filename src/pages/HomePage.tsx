@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EventMediorProvider, useNotify } from '../context';
+import { EventMediorProvider, useNotify, useSubscribe } from '../context';
 import { Col, Modal, Row } from 'antd';
 import { PersonModal } from '../modals/PersonModal';
 import { CompanyModal } from '../modals/CompanyModal';
@@ -12,7 +12,6 @@ const HomePage = () => {
   const { state } = useGetState('counterModule/getCounter', {
     events: ['counterModule/inc', 'counterModule/dec'],
   });
-  console.log('state', state);
   const dispatch = useMutateState();
   return (
     <>
@@ -34,6 +33,7 @@ const HomePage = () => {
       >
         dec
       </button>
+      {state && state}
     </>
   );
 };
