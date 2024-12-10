@@ -3,4 +3,4 @@ export {
   useNotify,
   useSubscribe,
 } from './EventMediorProvider';
-export { EventMediorStoreProvider } from './Store';
+export { EventMediorStoreProvider, useGetState, useMutateState } from './Store';

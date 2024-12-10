@@ -22,6 +22,12 @@ const EventMediorProvider = ({ children }: PropsWithChildren) => {
   // Lazily initialize the observer instance to ensure it's created only once.
   const [observer, _] = useState(init);
 
+  /**
+   * Initializes a new instance of Observer.
+   * This function is called only once during the component's lifetime.
+   *
+   * @returns {Observer} A new Observer instance.
+   */
   function init() {
     return new Observer();
   }
@@ -34,9 +40,9 @@ const EventMediorProvider = ({ children }: PropsWithChildren) => {
 };
 
 /**
- * EventMediorProvider.Subscriber component.
- * Subscribes to one or more events, re-renders when relevant events occur,
- * and cleans up subscriptions on unmount.
+ * Subscriber component of EventMediorProvider.
+ * Subscribes to one or more events and re-renders child components
+ * when relevant events are triggered.
  *
  * @param {string[]} event - List of event names to subscribe to.
  * @param {Function} children - Render function receiving the event payload and name.
@@ -52,6 +58,7 @@ EventMediorProvider.Subscriber = ({
   children: (params: eventDetail) => JSX.Element;
   shouldUpdate?: shouldUpdateType;
 }) => {
+  // Retrieve the Observer instance from context.
   const observer = useContext(EventMediorContext)!;
 
   // Track subscription initialization for each event.
@@ -72,6 +79,7 @@ EventMediorProvider.Subscriber = ({
   // Subscribe to events and handle updates.
   event.forEach((event, index) => {
     if (init.current[index] === false) {
+      // Initialize subscription for the event.
       init.current[index] = observer.subscribe({
         event,
         callback: (eventDetail: eventDetail) => {
@@ -88,7 +96,7 @@ EventMediorProvider.Subscriber = ({
   useEffect(() => {
     return () => {
       init.current.forEach((item) => {
-        (item as () => void)();
+        (item as () => void)(); // Invoke unsubscribe callbacks.
       });
     };
   }, []);
@@ -97,13 +105,13 @@ EventMediorProvider.Subscriber = ({
 };
 
 /**
- * useNotify hook.
- * Provides a function to trigger events with a payload.
+ * Custom hook to send notifications (trigger events) in the system.
  *
- * @returns {Function} The notify function from the Observer instance.
+ * @returns {Function} A function to notify observers of specific events.
  */
 function useNotify() {
   const observer = useContext(EventMediorContext)!;
+
   return ({ event, payload, config }: notify) => {
     observer.notify({
       event,
@@ -111,20 +119,19 @@ function useNotify() {
       config: config
         ? config
         : {
-            eventType: EVENTS_TYPE.SIGNAL_EVENT,
+            eventType: EVENTS_TYPE.SIGNAL_EVENT, // Default event type.
           },
     });
   };
 }
 
 /**
- * useSubscribe hook.
- * Subscribes to a single event, invoking a callback when the event is triggered.
- * Automatically cleans up the subscription on component unmount.
+ * Custom hook to subscribe to one or more events with a callback.
+ * Automatically cleans up subscriptions when the component is unmounted.
  *
- * @param {string} event - Name of the event to subscribe to.
- * @param {Function} callback - Function to call with the event payload.
- * @returns {Function} The notify function for triggering events.
+ * @param {Function} callback - Callback function invoked with event details.
+ * @param {string[]} events - List of events to subscribe to.
+ * @returns {Function} A function to notify other observers.
  */
 function useSubscribe(
   callback: (params: eventDetail) => void,
@@ -133,7 +140,7 @@ function useSubscribe(
   const observer = useContext(EventMediorContext)!;
 
   useEffect(() => {
-    // Subscribe to the event and receive the unsubscribe function.
+    // Subscribe to each event and store unsubscribe callbacks.
     let unsubscribe: (() => void)[] = [];
     events.forEach((event) => {
       unsubscribe.push(
@@ -144,14 +151,17 @@ function useSubscribe(
         })
       );
     });
+
+    // Cleanup subscriptions on unmount.
     return () => {
       unsubscribe.forEach((item) => {
         item();
       });
     };
-  });
+  }, [events, callback, observer]);
 
   return observer.notify;
 }
 
+// Exporting the provider and hooks for usage in other components.
 export { EventMediorProvider, useNotify, useSubscribe };

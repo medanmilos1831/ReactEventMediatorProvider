@@ -55,6 +55,7 @@ EventMediorStoreProvider.GetState = ({
     </>
   );
 };
+
 /**
  * Hook for retrieving a specific state from the store.
  * Subscribes to events and updates the component state when changes occur.
