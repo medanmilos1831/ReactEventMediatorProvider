@@ -1,14 +1,8 @@
-import {
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { PropsWithChildren, useContext, useEffect, useState } from 'react';
 
-import { Observer } from './observer';
 import { EventMediorContext } from './EventMediorContext';
-import { eventDetail, EVENTS_TYPE, notify, shouldUpdateType } from './types';
+import { Observer } from './observer';
+import { eventDetail, EVENTS_TYPE, notify } from './types';
 
 /**
  * EventMediorProvider component.
@@ -37,71 +31,6 @@ const EventMediorProvider = ({ children }: PropsWithChildren) => {
       {children}
     </EventMediorContext.Provider>
   );
-};
-
-/**
- * Subscriber component of EventMediorProvider.
- * Subscribes to one or more events and re-renders child components
- * when relevant events are triggered.
- *
- * @param {string[]} event - List of event names to subscribe to.
- * @param {Function} children - Render function receiving the event payload and name.
- * @param {shouldUpdateType} shouldUpdate - Optional; determines whether to trigger an update.
- * @returns {JSX.Element} Rendered child components with event data.
- */
-EventMediorProvider.Subscriber = ({
-  event,
-  children,
-  shouldUpdate = true,
-}: {
-  event: string[];
-  children: (params: eventDetail) => JSX.Element;
-  shouldUpdate?: shouldUpdateType;
-}) => {
-  // Retrieve the Observer instance from context.
-  const observer = useContext(EventMediorContext)!;
-
-  // Track subscription initialization for each event.
-  const init = useRef<(boolean | (() => void))[]>(
-    Array(event.length).fill(false)
-  );
-
-  // State used to force re-rendering.
-  const [_, render] = useState<number>(0);
-
-  // Reference to hold the latest event payload.
-  const payload = useRef<eventDetail>({
-    payload: undefined,
-    event: undefined,
-    config: undefined,
-  });
-
-  // Subscribe to events and handle updates.
-  event.forEach((event, index) => {
-    if (init.current[index] === false) {
-      // Initialize subscription for the event.
-      init.current[index] = observer.subscribe({
-        event,
-        callback: (eventDetail: eventDetail) => {
-          // Update payload and trigger re-render.
-          payload.current = eventDetail;
-          render((prev) => prev + 1);
-        },
-        shouldUpdate,
-      });
-    }
-  });
-
-  // Cleanup subscriptions on unmount.
-  useEffect(() => {
-    return () => {
-      init.current.forEach((item) => {
-        (item as () => void)(); // Invoke unsubscribe callbacks.
-      });
-    };
-  }, []);
-
-  return <>{children(payload.current)}</>;
 };
 
 /**

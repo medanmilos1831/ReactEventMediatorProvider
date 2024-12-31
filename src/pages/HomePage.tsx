@@ -7,68 +7,92 @@ import { SideBar, TableWrapper } from '../components';
 import { useGetState } from '../context/Store';
 import { useMutateState } from '../context/Store/EventMediorStoreProvider';
 
-const HomePage = () => {
-  const [counter, setCounter] = useState(0);
+const SideBarFilter = () => {
   const emit = useNotify();
-  const dispatch = useMutateState();
-  const { state } = useGetState('counterModule/getCounter', {
-    events: ['counterModule/inc', 'counterModule/dec'],
-  });
-  useSubscribe((data) => {}, ['counterModule/inc']);
+  function emiter(payload: number) {
+    emit({
+      event: 'choseNumber',
+      payload,
+    });
+  }
+  return (
+    <div
+      style={{
+        border: '1px solid red',
+      }}
+    >
+      <span>Choose Number</span>
+      <button
+        onClick={() => {
+          emiter(1);
+        }}
+      >
+        1
+      </button>
+      <button
+        onClick={() => {
+          emiter(2);
+        }}
+      >
+        2
+      </button>
+      <button
+        onClick={() => {
+          emiter(3);
+        }}
+      >
+        3
+      </button>
+      <button
+        onClick={() => {
+          emiter(4);
+        }}
+      >
+        4
+      </button>
+      <button
+        onClick={() => {
+          emiter(5);
+        }}
+      >
+        5
+      </button>
+    </div>
+  );
+};
+const Wrapper = () => {
+  useSubscribe(
+    (obj) => {
+      console.log('obj', obj);
+    },
+    ['choseNumber']
+  );
   return (
     <>
-      <EventMediorProvider.Subscriber
-        event={['counterModule/inc', 'counterModule/dec', 'zika']}
-        shouldUpdate={false}
-      >
-        {({ event, payload, config }) => {
-          return <>pera</>;
-        }}
-      </EventMediorProvider.Subscriber>
-      <button
-        onClick={() => {
-          emit({
-            event: 'pera',
-            payload: 'ovo je neki payload',
-            // config: {
-            //   eventType: 'pera',
-            // },
-          });
+      <span>My wrapper</span>
+      {/* <EventMediorProvider.Subscriber
+        event={['choseNumber']}
+        shouldUpdate={({ payload }) => {
+          return payload === 2 || payload === 4;
         }}
       >
-        rise pera event
-      </button>
-      <button
-        onClick={() => {
-          dispatch({
-            event: 'counterModule/inc',
-            payload: 1,
-          });
+        {({ payload }) => {
+          return (
+            <>
+              <span>{payload ?? 0}</span>
+            </>
+          );
         }}
-      >
-        inc
-      </button>
-      <button
-        onClick={() => {
-          dispatch({
-            event: 'counterModule/dec',
-            payload: 1,
-          });
-        }}
-      >
-        dec
-      </button>
-      <button
-        onClick={() => {
-          emit({
-            event: 'zika',
-            payload: 1,
-          });
-        }}
-      >
-        signal
-      </button>
-      {/* {state && state} */}
+      </EventMediorProvider.Subscriber> */}
+    </>
+  );
+};
+
+const HomePage = () => {
+  return (
+    <>
+      <SideBarFilter />
+      <Wrapper />
     </>
   );
 };
