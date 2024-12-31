@@ -4,12 +4,7 @@
  * Provides methods for notifying subscribers and handling conditional updates.
  */
 
-import {
-  IObserver,
-  eventDetail,
-  shouldUpdateType,
-  subscribeType,
-} from '../types';
+import { event, IObserver, subscribeType } from '../types';
 
 export class Observer extends EventTarget implements IObserver {
   constructor() {
@@ -23,9 +18,8 @@ export class Observer extends EventTarget implements IObserver {
    * @param {eventDetail} eventDetail - Object containing the event name, payload, and optional configuration.
    * - `event` (string): The name of the event to notify subscribers about.
    * - `payload` (any): The data to send to subscribers.
-   * - `config` (optional): Additional configuration like event type.
    */
-  notify = (eventDetail: eventDetail) => {
+  notify = (eventDetail: event) => {
     if (!eventDetail.event) {
       console.error('Event name is undefined!');
       return;
@@ -41,32 +35,18 @@ export class Observer extends EventTarget implements IObserver {
 
   /**
    * Subscribes to a specific event with a callback and an optional condition for updates.
-   * Allows conditional execution of the callback based on the `shouldUpdate` parameter.
    *
    * @param {subscribeType} params - Subscription details.
    * - `event` (string): The event to subscribe to.
    * - `callback` (function): The function to execute when the event occurs.
-   * - `shouldUpdate` (boolean or function): Determines whether the callback is triggered:
-   *   - If `true`, the callback is always executed.
-   *   - If a function, it is called with the event payload and must return `true` to trigger the callback.
    *
    * @returns {() => void} A function to unsubscribe from the event.
    */
-  subscribe({ event, callback, shouldUpdate }: subscribeType) {
+  subscribe({ event, callback }: subscribeType) {
     // Listener function that wraps the callback with conditional logic.
     const listener = (event: any) => {
-      const eventDetail = event.detail as eventDetail;
-
-      // Trigger the callback if `shouldUpdate` is a boolean and true.
-      if (typeof shouldUpdate === 'boolean' && shouldUpdate) {
-        callback(eventDetail);
-        return;
-      }
-
-      // Trigger the callback if `shouldUpdate` is a function and returns true.
-      if (typeof shouldUpdate === 'function' && shouldUpdate(eventDetail)) {
-        callback(eventDetail);
-      }
+      const eventDetail = event.detail as event;
+      callback(eventDetail);
     };
 
     // Attach the listener to the event.

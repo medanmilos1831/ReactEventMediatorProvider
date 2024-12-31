@@ -2,7 +2,7 @@ import { PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { EventMediorContext } from './EventMediorContext';
 import { Observer } from './observer';
-import { eventDetail, EVENTS_TYPE, notify } from './types';
+import { event } from './types';
 
 /**
  * EventMediorProvider component.
@@ -41,15 +41,10 @@ const EventMediorProvider = ({ children }: PropsWithChildren) => {
 function useNotify() {
   const observer = useContext(EventMediorContext)!;
 
-  return ({ event, payload, config }: notify) => {
+  return ({ event, payload }: event) => {
     observer.notify({
       event,
       payload,
-      config: config
-        ? config
-        : {
-            eventType: EVENTS_TYPE.SIGNAL_EVENT, // Default event type.
-          },
     });
   };
 }
@@ -62,10 +57,7 @@ function useNotify() {
  * @param {string[]} events - List of events to subscribe to.
  * @returns {Function} A function to notify other observers.
  */
-function useSubscribe(
-  callback: (params: eventDetail) => void,
-  events: string[]
-) {
+function useSubscribe(callback: (params: event) => void, events: string[]) {
   const observer = useContext(EventMediorContext)!;
 
   useEffect(() => {
@@ -76,7 +68,6 @@ function useSubscribe(
         observer.subscribe({
           event,
           callback,
-          shouldUpdate: true,
         })
       );
     });

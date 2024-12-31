@@ -17,16 +17,8 @@ export interface IObserver {
    * @param {eventDetail} params - The details of the event being triggered.
    * @returns {any} Result of the notify operation (can vary based on implementation).
    */
-  notify(params: eventDetail): any;
+  notify(params: event): any;
 }
-
-/**
- * Defines the condition for updating a subscription.
- * Can either be a boolean or a function that evaluates the event details.
- */
-export type shouldUpdateType =
-  | boolean
-  | ((eventDetail: eventDetail) => boolean);
 
 /**
  * Parameters for subscribing to an event.
@@ -34,13 +26,12 @@ export type shouldUpdateType =
 export type subscribeType = {
   event: string; // The name of the event to subscribe to.
   callback: Function; // The callback function executed when the event is triggered.
-  shouldUpdate: shouldUpdateType; // Determines whether the callback should run.
 };
 
 /**
  * Core structure for an event.
  */
-type event = {
+export type event = {
   event: string | undefined; // The name of the event (can be undefined in some cases).
   payload: any; // Data passed along with the event.
 };
@@ -48,22 +39,11 @@ type event = {
 /**
  * Extended type for the `notify` function parameters.
  */
-export type notify = event & {
-  config?: {
-    eventType: `${EVENTS_TYPE}` | string; // Optional event type (supports predefined or custom types).
-  };
-};
-
-/**
- * Extended details of an event, including configuration.
- */
-export type eventDetail = event & {
-  config:
-    | {
-        eventType: `${EVENTS_TYPE}` | string; // Event type for categorization.
-      }
-    | undefined;
-};
+// export type notify = event & {
+//   config?: {
+//     eventType: `${EVENTS_TYPE}` | string; // Optional event type (supports predefined or custom types).
+//   };
+// };
 
 // STORE TYPES
 

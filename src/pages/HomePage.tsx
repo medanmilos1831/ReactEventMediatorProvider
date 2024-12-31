@@ -11,7 +11,7 @@ const SideBarFilter = () => {
   const emit = useNotify();
   function emiter(payload: number) {
     emit({
-      event: 'choseNumber',
+      event: payload % 2 === 0 ? 'par' : 'nepar',
       payload,
     });
   }
@@ -65,25 +65,11 @@ const Wrapper = () => {
     (obj) => {
       console.log('obj', obj);
     },
-    ['choseNumber']
+    ['par']
   );
   return (
     <>
       <span>My wrapper</span>
-      {/* <EventMediorProvider.Subscriber
-        event={['choseNumber']}
-        shouldUpdate={({ payload }) => {
-          return payload === 2 || payload === 4;
-        }}
-      >
-        {({ payload }) => {
-          return (
-            <>
-              <span>{payload ?? 0}</span>
-            </>
-          );
-        }}
-      </EventMediorProvider.Subscriber> */}
     </>
   );
 };
