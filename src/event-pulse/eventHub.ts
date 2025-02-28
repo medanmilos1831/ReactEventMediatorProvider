@@ -86,9 +86,10 @@ export class EventHub {
    * const newEventEntity = EventHub.CREATE_EVENT_ENTITY();
    * newEventEntity.dispatch('eventName', data); // Dispatches an event from the new entity.
    */
-  static CREATE_EVENT_ENTITY = () => {
+  static CREATE_EVENT_ENTITY = (name: string) => {
     // Create a new EventEntity with its dependencies: InterceptorEventService and ScopedEventService.
     return new EventEntity(
+      name,
       new InterceptorEventService(), // Creates a new instance of the interceptor service.
       new ScopedEventService() // Creates a new instance of the scoped event service.
     );

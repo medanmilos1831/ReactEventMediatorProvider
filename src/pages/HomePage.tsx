@@ -2,81 +2,96 @@ import { PersonModal } from '../modals/PersonModal';
 import { One } from './components/One';
 import { Three } from './components/Three';
 import { Two } from './components/Two';
-import { eventScope, dispatch, subscribe } from '../event-pulse';
+import { eventScope, dispatch, subscribe, logHub } from '../event-pulse';
+import { Button, Space } from 'antd';
 
 const HomePage = () => {
-  subscribe('person', (data: any) => {
-    console.log('this is modal scope', data);
+  subscribe('*', (data: any) => {
+    console.log('GLOBAL EVENT GLOBAL SCOPE', data);
   });
-  eventScope('user').subscribe('person', (data: any) => {
-    console.log('this is user scope', data);
+  subscribe('globalEventOne', (data: any) => {
+    console.log('GLOBAL EVENT ONE GLOBAL SCOPE', data);
   });
-  eventScope('modal').subscribe('person', (data: any) => {
-    console.log('this is modal scope', data);
+  eventScope('nested').subscribe('*', (data: any) => {
+    console.log('GLOBAL EVENT NESTED SCOPE', data);
   });
-  eventScope('modal')
-    .eventScope('mile')
-    .subscribe('person', (data: any) => {
-      console.log('this is modal mile scope', data);
-    });
+  eventScope('nested').subscribe('globalEventOne', (data: any) => {
+    console.log('GLOBAL EVENT ONE NESTED SCOPE', data);
+  });
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <h1>Home page</h1>
-      <button
+      <Button
+        type="primary"
         onClick={() => {
-          eventScope('user').dispatch({
-            eventName: 'person',
-            payload: {
-              fname: 'this is user scope payload',
-            },
-          });
+          logHub();
         }}
       >
-        user scope
-      </button>
-      <button
-        onClick={() => {
-          eventScope('modal').dispatch({
-            eventName: 'person',
-            payload: {
-              fname: 'this is modal scope payload',
-            },
-          });
-        }}
-      >
-        modal scope
-      </button>
-      <button
-        onClick={() => {
-          eventScope('modal')
-            .eventScope('mile')
-            .dispatch({
-              eventName: 'person',
-              payload: {
-                fname: 'this is modal mile scope payload',
-              },
-            });
-        }}
-      >
-        modal mile scope
-      </button>
-      <button
+        LOG HUB
+      </Button>
+      <Button
+        type="primary"
         onClick={() => {
           dispatch({
-            eventName: 'person',
+            eventName: 'someGlobalEvent',
             payload: {
-              fname: 'GLOBAL scope',
+              scope: 'global',
+              data: '0',
             },
           });
         }}
       >
-        global
-      </button>
-      <PersonModal />
-      <One />
-      <Two />
-      <Three />
-    </>
+        GLOBAL EVENT GLOBAL SCOPE
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => {
+          dispatch({
+            eventName: 'globalEventOne',
+            payload: {
+              scope: 'global',
+              data: '1',
+            },
+          });
+        }}
+      >
+        GLOBAL EVENT ONE GLOBAL SCOPE
+      </Button>
+      {/*  */}
+      <Button
+        type="primary"
+        onClick={() => {
+          eventScope('nested').dispatch({
+            eventName: 'someGlobalEvent',
+            payload: {
+              scope: 'global',
+              data: '0',
+            },
+          });
+        }}
+      >
+        GLOBAL EVENT NESTED SCOPE
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => {
+          eventScope('nested').dispatch({
+            eventName: 'globalEventOne',
+            payload: {
+              scope: 'global',
+              data: '1',
+            },
+          });
+        }}
+      >
+        GLOBAL EVENT ONE NESTED SCOPE
+      </Button>
+    </div>
   );
 };
 
