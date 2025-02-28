@@ -2,9 +2,12 @@ import { PersonModal } from '../modals/PersonModal';
 import { One } from './components/One';
 import { Three } from './components/Three';
 import { Two } from './components/Two';
-import { eventScope } from '../eventService';
+import { eventScope, dispatch, subscribe } from '../event-pulse';
 
 const HomePage = () => {
+  subscribe('person', (data: any) => {
+    console.log('this is modal scope', data);
+  });
   eventScope('user').subscribe('person', (data: any) => {
     console.log('this is user scope', data);
   });
@@ -56,6 +59,18 @@ const HomePage = () => {
         }}
       >
         modal mile scope
+      </button>
+      <button
+        onClick={() => {
+          dispatch({
+            eventName: 'person',
+            payload: {
+              fname: 'GLOBAL',
+            },
+          });
+        }}
+      >
+        global
       </button>
       <PersonModal />
       <One />

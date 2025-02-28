@@ -1,5 +1,5 @@
-import { EventInterceptor } from './event.interceptor';
-import { EventScope } from './event.scope';
+import { InterceptorEventService } from './interceptorEventService';
+import { ScopedEventService } from './scopedEventService';
 
 /**
  * Type for the function used to subscribe to an event. The callback function receives event data.
@@ -7,27 +7,24 @@ import { EventScope } from './event.scope';
  */
 type subscriberCallbackType = (data: { payload: any; append: any }) => void;
 
-/**
- * Class representing a service for managing events with support for interceptors.
- * This class allows for event dispatching and subscribing, as well as manipulating data before the event is emitted.
- * It inherits from `EventTarget`, meaning it can emit and listen for events.
- */
-export class EventService extends EventTarget {
+export class EventEntity extends EventTarget {
   /**
    * Instance of the interceptor service that manages data processing before an event is dispatched.
    */
-  interceptorService!: EventInterceptor;
-  eventScopes!: EventScope;
+  interceptorService!: InterceptorEventService;
+  eventScopes!: ScopedEventService;
 
   /**
    * Constructor function that initializes the EventService and the interceptor service.
    */
-  constructor(interceptorService: EventInterceptor, eventScopes: EventScope) {
+  constructor(
+    interceptorService: InterceptorEventService,
+    eventScopes: ScopedEventService
+  ) {
     super();
     this.interceptorService = interceptorService;
     this.eventScopes = eventScopes;
   }
-
   /**
    * Function that dispatches an event with the processed payload.
    * It first executes all the interceptors registered for the event, then dispatches the event.
@@ -71,14 +68,5 @@ export class EventService extends EventTarget {
 
     // Returns a function that removes the event listener
     return () => this.removeEventListener(eventName, handler);
-  };
-
-  static EXPOSE = (event: EventService) => {
-    return {
-      dispatch: event.dispatch,
-      subscribe: event.subscribe,
-      eventInterceptor: event.interceptorService.interceptor,
-      eventScope: event.eventScopes.eventScope,
-    };
   };
 }

@@ -19,7 +19,7 @@ type interceptorCallbackType = (obj: { eventPayload: any }) => any;
 /**
  * Class that manages the registration and execution of interceptors for events.
  */
-export class EventInterceptor {
+export class InterceptorEventService {
   /**
    * Maps event names to a list of interceptors that are executed when the event is triggered.
    * The key is the event name, and the value is a list of interceptors that respond to that event.
