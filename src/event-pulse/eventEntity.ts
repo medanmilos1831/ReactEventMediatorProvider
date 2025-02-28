@@ -31,6 +31,7 @@ export class EventEntity extends EventTarget {
    * This service manages event subscriptions and ensures that events are correctly scoped for specific contexts.
    */
   eventScopes!: ScopedEventService;
+  entityName: string = 'global';
 
   /**
    * Constructor for creating an instance of `EventEntity`.
@@ -40,10 +41,12 @@ export class EventEntity extends EventTarget {
    * @param eventScopes The service managing the scope and subscriptions for events.
    */
   constructor(
+    name: string,
     interceptorService: InterceptorEventService,
     eventScopes: ScopedEventService
   ) {
     super(); // Calls the constructor of the `EventTarget` class, which provides event handling functionality.
+    this.entityName = name;
     this.interceptorService = interceptorService;
     this.eventScopes = eventScopes;
   }
@@ -78,7 +81,16 @@ export class EventEntity extends EventTarget {
     });
 
     // Dispatching the event, making it available for listeners.
+
     this.dispatchEvent(event);
+    if (this.eventScopes.scopedEvents['*']) {
+      const event = new CustomEvent('*', {
+        detail: {
+          payload: eventPayload, // The processed payload is included in the event's detail property.
+        },
+      });
+      this.dispatchEvent(event);
+    }
   };
 
   /**
@@ -94,6 +106,10 @@ export class EventEntity extends EventTarget {
    * unsubscribe(); // Unsubscribe from the event.
    */
   subscribe = (eventName: string, callback: subscriberCallbackType) => {
+    if (eventName === '*') {
+      this.eventScopes.eventScope(eventName);
+    }
+
     // Define the handler function that calls the provided callback with event data.
     let handler = (e: any) => {
       callback(e.detail); // The event data is contained in `e.detail`.

@@ -18,7 +18,7 @@ export class ScopedEventService {
    *   "orderScope": EventEntityInstance,
    * }
    */
-  private scopedEvents: Record<string, EventEntity> = {};
+  scopedEvents: Record<string, EventEntity> = {};
 
   /**
    * A private method that generates and stores a new `EventEntity` for a given scope name.
@@ -28,7 +28,7 @@ export class ScopedEventService {
    */
   private generateScope = (scopeName: string): void => {
     // Create a new EventEntity and store it in the scopedEvents record
-    this.scopedEvents[scopeName] = EventHub.CREATE_EVENT_ENTITY();
+    this.scopedEvents[scopeName] = EventHub.CREATE_EVENT_ENTITY(scopeName);
   };
 
   /**
