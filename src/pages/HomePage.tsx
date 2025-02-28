@@ -65,7 +65,7 @@ const HomePage = () => {
           dispatch({
             eventName: 'person',
             payload: {
-              fname: 'GLOBAL',
+              fname: 'GLOBAL scope',
             },
           });
         }}
