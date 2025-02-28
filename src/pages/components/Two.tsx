@@ -1,16 +1,14 @@
-import { eventInterceptor } from '../../eventService/event.service';
-
 export const Two = () => {
-  eventInterceptor(
-    ({ eventPayload }) => {
-      return {
-        ...eventPayload,
-        age: 1234,
-      };
-    },
-    {
-      eventName: 'openPersonModal',
-    }
-  );
+  // eventInterceptor(
+  //   ({ eventPayload }) => {
+  //     return {
+  //       ...eventPayload,
+  //       age: 1234,
+  //     };
+  //   },
+  //   {
+  //     eventName: 'openPersonModal',
+  //   }
+  // );
   return <div>Two</div>;
 };

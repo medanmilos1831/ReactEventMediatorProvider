@@ -1,4 +1,5 @@
 import { EventInterceptor } from './event.interceptor';
+import { EventScope } from './event.scope';
 
 /**
  * Type for the function used to subscribe to an event. The callback function receives event data.
@@ -11,18 +12,20 @@ type subscriberCallbackType = (data: { payload: any; append: any }) => void;
  * This class allows for event dispatching and subscribing, as well as manipulating data before the event is emitted.
  * It inherits from `EventTarget`, meaning it can emit and listen for events.
  */
-class EventService extends EventTarget {
+export class EventService extends EventTarget {
   /**
    * Instance of the interceptor service that manages data processing before an event is dispatched.
    */
   interceptorService!: EventInterceptor;
+  eventScopes!: EventScope;
 
   /**
    * Constructor function that initializes the EventService and the interceptor service.
    */
-  constructor() {
+  constructor(interceptorService: EventInterceptor, eventScopes: EventScope) {
     super();
-    this.interceptorService = new EventInterceptor();
+    this.interceptorService = interceptorService;
+    this.eventScopes = eventScopes;
   }
 
   /**
@@ -69,16 +72,13 @@ class EventService extends EventTarget {
     // Returns a function that removes the event listener
     return () => this.removeEventListener(eventName, handler);
   };
+
+  static EXPOSE = (event: EventService) => {
+    return {
+      dispatch: event.dispatch,
+      subscribe: event.subscribe,
+      eventInterceptor: event.interceptorService.interceptor,
+      eventScope: event.eventScopes.eventScope,
+    };
+  };
 }
-
-// Initializing an instance of EventService
-let instance = new EventService();
-
-// Exporting dispatch and subscribe functions for use in other parts of the application
-const dispatch = instance.dispatch;
-const subscribe = instance.subscribe;
-
-// Exporting the interceptor service for registering interceptors
-const eventInterceptor = instance.interceptorService.interceptor;
-
-export { dispatch, subscribe, eventInterceptor };
