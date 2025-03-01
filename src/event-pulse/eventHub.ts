@@ -1,6 +1,4 @@
 import { EventEntity } from './eventEntity';
-import { InterceptorEventService } from './interceptorEventService';
-import { ScopedEventService } from './scopedEventService';
 
 /**
  * The EventHub class acts as the main point of interaction for managing event-related operations
@@ -17,7 +15,7 @@ export class EventHub {
    * The EventEntity object contains the logic for all event handling, and this EventHub
    * provides access to it for external use.
    */
-  event: EventEntity;
+  event = new EventEntity('global');
 
   /**
    * Constructor for the EventHub class.
@@ -27,10 +25,6 @@ export class EventHub {
    * @param event - The EventEntity instance that will handle event dispatching, subscriptions,
    * and interactions with interceptors and scopes.
    */
-  constructor(event: EventEntity) {
-    // Initialize the event property with the provided EventEntity instance.
-    this.event = event;
-  }
 
   /**
    * The EXPOSE method exposes critical methods and services from the EventEntity
@@ -64,34 +58,23 @@ export class EventHub {
       subscribe: event.subscribe,
 
       // Access the interceptor service for modifying event data before dispatching.
-      eventInterceptor: event.interceptorService.interceptor,
+      eventInterceptor: event.eventInterceptor.interceptor,
 
       // Access the event scope service that allows creating and managing event-specific scopes.
-      eventScope: event.eventScopes.eventScope,
     };
   };
 
-  /**
-   * The CREATE_EVENT_ENTITY method is used to create a new EventEntity instance.
-   * This new instance is fully initialized with the necessary services:
-   * - InterceptorEventService for intercepting and modifying event data.
-   * - ScopedEventService for handling scoped event behavior.
-   *
-   * This method is essential for creating new, self-contained event instances, each with
-   * their own event logic, interceptor management, and event scope handling.
-   *
-   * @returns A new EventEntity instance, fully configured with the required services.
-   *
-   * @example
-   * const newEventEntity = EventHub.CREATE_EVENT_ENTITY();
-   * newEventEntity.dispatch('eventName', data); // Dispatches an event from the new entity.
-   */
-  static CREATE_EVENT_ENTITY = (name: string) => {
-    // Create a new EventEntity with its dependencies: InterceptorEventService and ScopedEventService.
-    return new EventEntity(
-      name,
-      new InterceptorEventService(), // Creates a new instance of the interceptor service.
-      new ScopedEventService() // Creates a new instance of the scoped event service.
-    );
-  };
+  eventScope(scope: string) {
+    if (!this.event.scopedEvents[scope]) {
+      this.event.scopedEvents[scope] = new EventEntity(scope);
+    }
+
+    return {
+      eventScope: this.eventScope?.bind({
+        event: this.event.scopedEvents[scope],
+        eventScope: this.eventScope,
+      }),
+      ...EventHub.EXPOSE(this.event.scopedEvents![scope]),
+    };
+  }
 }
