@@ -116,4 +116,18 @@ export class EventEntity extends EventTarget {
     // Return a function that removes the event listener when called.
     return () => this.removeEventListener(eventName, handler);
   };
+
+  eventScope(scope: string) {
+    if (!this.scopedEvents[scope]) {
+      this.scopedEvents[scope] = new EventEntity(scope);
+    }
+    return {
+      dispatch: this.scopedEvents[scope].dispatch,
+      subscribe: this.scopedEvents[scope].subscribe,
+      eventInterceptor: this.scopedEvents[scope].eventInterceptor.interceptor,
+      eventScope: this.scopedEvents[scope].eventScope.bind(
+        this.scopedEvents[scope]
+      ),
+    };
+  }
 }
