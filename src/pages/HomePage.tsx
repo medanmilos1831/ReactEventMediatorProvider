@@ -4,6 +4,7 @@ import {
   eventScope,
   logHub,
   subscribe,
+  eventHub,
 } from '../event-pulse';
 import { ComponentOne } from './components/ComponentOne';
 const HomePage = () => {

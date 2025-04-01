@@ -1,3 +1,4 @@
+import { GLOBAL_EVENT_ENTITY } from './constants';
 import { EventInterceptor } from './eventInterceptor';
 
 /**
@@ -28,7 +29,7 @@ export class EventEntity extends EventTarget {
    * Instance of the scoped event service, responsible for managing the scope of events.
    * This service manages event subscriptions and ensures that events are correctly scoped for specific contexts.
    */
-  entityName: string = 'global';
+  entityName?: string;
   scopedEvents: { [key: string]: EventEntity } = {};
 
   /**
@@ -37,9 +38,9 @@ export class EventEntity extends EventTarget {
    *
    * @param eventInterceptor The service responsible for processing event data via interceptors.
    */
-  constructor(name: string) {
+  constructor(name?: string) {
     super(); // Calls the constructor of the `EventTarget` class, which provides event handling functionality.
-    this.entityName = name;
+    this.entityName = name || GLOBAL_EVENT_ENTITY;
     this.eventInterceptor = new EventInterceptor();
   }
 
