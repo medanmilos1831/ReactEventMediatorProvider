@@ -1,4 +1,4 @@
-import { EventEntity } from './eventEntity';
+import { EventEntity } from './EventEntity';
 let eventHub = new EventEntity();
 
 // Export the necessary methods for use in other parts of the application
