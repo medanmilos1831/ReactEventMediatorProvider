@@ -25,7 +25,7 @@ type interceptorCallbackType = (obj: { eventPayload: any }) => any;
  * Class that manages the registration, execution, and removal of interceptors for events.
  * Interceptors are functions that can modify or process the event payload before the event is dispatched.
  */
-export class InterceptorEventService {
+export class EventInterceptor {
   /**
    * Maps event names to a list of interceptors that are executed when the event is triggered.
    * The key is the event name, and the value is an array of interceptors associated with that event.

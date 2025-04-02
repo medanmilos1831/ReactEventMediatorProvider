@@ -1,5 +1,5 @@
-import { InterceptorEventService } from './interceptorEventService';
-import { ScopedEventService } from './scopedEventService';
+import { GLOBAL_EVENT_ENTITY } from './constants';
+import { EventInterceptor } from './eventInterceptor';
 
 /**
  * Type for the function used to subscribe to an event. The callback function receives event data.
@@ -7,9 +7,8 @@ import { ScopedEventService } from './scopedEventService';
  *
  * @param data The data sent with the event.
  * @param data.payload The main data sent along with the event.
- * @param data.append Any additional data that may be appended to the payload.
  */
-type subscriberCallbackType = (data: { payload: any; append: any }) => void;
+type subscriberCallbackType = (data: { payload: any }) => void;
 
 /**
  * The `EventEntity` class represents an event that can be dispatched and subscribed to.
@@ -22,33 +21,27 @@ export class EventEntity extends EventTarget {
    * This service executes registered interceptors to modify or process the event's payload.
    *
    * @example
-   * eventEntity.interceptorService.executeInterceptors("userLogin", payload);
+   * eventEntity.eventInterceptor.executeInterceptors("userLogin", payload);
    */
-  interceptorService!: InterceptorEventService;
+  eventInterceptor!: EventInterceptor;
 
   /**
    * Instance of the scoped event service, responsible for managing the scope of events.
    * This service manages event subscriptions and ensures that events are correctly scoped for specific contexts.
    */
-  eventScopes!: ScopedEventService;
-  entityName: string = 'global';
+  entityName?: string;
+  scopedEvents: { [key: string]: EventEntity } = {};
 
   /**
    * Constructor for creating an instance of `EventEntity`.
    * It initializes the event entity with the provided interceptor and scoped event services.
    *
-   * @param interceptorService The service responsible for processing event data via interceptors.
-   * @param eventScopes The service managing the scope and subscriptions for events.
+   * @param eventInterceptor The service responsible for processing event data via interceptors.
    */
-  constructor(
-    name: string,
-    interceptorService: InterceptorEventService,
-    eventScopes: ScopedEventService
-  ) {
+  constructor(name?: string) {
     super(); // Calls the constructor of the `EventTarget` class, which provides event handling functionality.
-    this.entityName = name;
-    this.interceptorService = interceptorService;
-    this.eventScopes = eventScopes;
+    this.entityName = name || GLOBAL_EVENT_ENTITY;
+    this.eventInterceptor = new EventInterceptor();
   }
 
   /**
@@ -68,7 +61,7 @@ export class EventEntity extends EventTarget {
     payload?: any; // The payload to be sent with the event.
   }) => {
     // Execute interceptors to process the payload before dispatching the event.
-    let { payload: eventPayload } = this.interceptorService.executeInterceptors(
+    let { payload: eventPayload } = this.eventInterceptor.executeInterceptors(
       eventName,
       payload
     );
@@ -83,7 +76,8 @@ export class EventEntity extends EventTarget {
     // Dispatching the event, making it available for listeners.
 
     this.dispatchEvent(event);
-    if (this.eventScopes.scopedEvents['*']) {
+    // console.log('eeee', this.scopedEvents);
+    if (this.scopedEvents['*']) {
       const event = new CustomEvent('*', {
         detail: {
           payload: eventPayload, // The processed payload is included in the event's detail property.
@@ -107,7 +101,9 @@ export class EventEntity extends EventTarget {
    */
   subscribe = (eventName: string, callback: subscriberCallbackType) => {
     if (eventName === '*') {
-      this.eventScopes.eventScope(eventName);
+      if (!this.scopedEvents[eventName]) {
+        this.scopedEvents[eventName] = new EventEntity(eventName);
+      }
     }
 
     // Define the handler function that calls the provided callback with event data.

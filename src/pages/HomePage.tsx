@@ -1,96 +1,42 @@
-import { PersonModal } from '../modals/PersonModal';
-import { One } from './components/One';
-import { Three } from './components/Three';
-import { Two } from './components/Two';
-import { eventScope, dispatch, subscribe, logHub } from '../event-pulse';
-import { Button, Space } from 'antd';
-
+import { dispatch, eventInterceptor, subscribe } from '../event-pulse';
+import { ComponentOne } from './components/ComponentOne';
 const HomePage = () => {
-  subscribe('*', (data: any) => {
-    console.log('GLOBAL EVENT GLOBAL SCOPE', data);
+  subscribe({
+    scope: 'person:zile',
+    eventName: 'pera',
+    callback(data) {
+      console.log('usao sam obde', data);
+    },
   });
-  subscribe('globalEventOne', (data: any) => {
-    console.log('GLOBAL EVENT ONE GLOBAL SCOPE', data);
-  });
-  eventScope('nested').subscribe('*', (data: any) => {
-    console.log('GLOBAL EVENT NESTED SCOPE', data);
-  });
-  eventScope('nested').subscribe('globalEventOne', (data: any) => {
-    console.log('GLOBAL EVENT ONE NESTED SCOPE', data);
+  eventInterceptor({
+    scope: 'person:zile',
+    eventName: 'pera',
+    callback(data) {
+      console.log('PRESRETAC', data.eventPayload);
+      return {
+        ppayload: data.eventPayload,
+        fname: 'Milos',
+      };
+      // console.log('samo', data);
+    },
   });
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <h1>Home page</h1>
-      <Button
-        type="primary"
-        onClick={() => {
-          logHub();
-        }}
-      >
-        LOG HUB
-      </Button>
-      <Button
-        type="primary"
+    <div>
+      <h1>home page</h1>
+      <button
         onClick={() => {
           dispatch({
-            eventName: 'someGlobalEvent',
-            payload: {
-              scope: 'global',
-              data: '0',
+            scope: 'person:zile',
+            dispatch: {
+              eventName: 'pera',
+              payload: 1,
             },
           });
         }}
       >
-        GLOBAL EVENT GLOBAL SCOPE
-      </Button>
-      <Button
-        type="primary"
-        onClick={() => {
-          dispatch({
-            eventName: 'globalEventOne',
-            payload: {
-              scope: 'global',
-              data: '1',
-            },
-          });
-        }}
-      >
-        GLOBAL EVENT ONE GLOBAL SCOPE
-      </Button>
-      {/*  */}
-      <Button
-        type="primary"
-        onClick={() => {
-          eventScope('nested').dispatch({
-            eventName: 'someGlobalEvent',
-            payload: {
-              scope: 'global',
-              data: '0',
-            },
-          });
-        }}
-      >
-        GLOBAL EVENT NESTED SCOPE
-      </Button>
-      <Button
-        type="primary"
-        onClick={() => {
-          eventScope('nested').dispatch({
-            eventName: 'globalEventOne',
-            payload: {
-              scope: 'global',
-              data: '1',
-            },
-          });
-        }}
-      >
-        GLOBAL EVENT ONE NESTED SCOPE
-      </Button>
+        click me
+      </button>
+      <ComponentOne />
     </div>
   );
 };
