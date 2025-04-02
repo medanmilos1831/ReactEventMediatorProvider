@@ -1,34 +1,36 @@
-import {
-  dispatch,
-  eventInterceptor,
-  eventScope,
-  logHub,
-  subscribe,
-  eventHub,
-} from '../event-pulse';
+import { dispatch, eventInterceptor, subscribe } from '../event-pulse';
 import { ComponentOne } from './components/ComponentOne';
 const HomePage = () => {
-  logHub();
-  eventScope('peraScoped').subscribe('pera', ({ payload }) => {
-    console.log('helooooo', payload);
-  });
-
-  eventScope('peraScoped').eventInterceptor(
-    (payload) => {
-      return 10;
+  subscribe({
+    scope: 'person:zile',
+    eventName: 'pera',
+    callback(data) {
+      console.log('usao sam obde', data);
     },
-    {
-      eventName: 'pera',
-    }
-  );
+  });
+  eventInterceptor({
+    scope: 'person:zile',
+    eventName: 'pera',
+    callback(data) {
+      console.log('PRESRETAC', data.eventPayload);
+      return {
+        ppayload: data.eventPayload,
+        fname: 'Milos',
+      };
+      // console.log('samo', data);
+    },
+  });
   return (
     <div>
       <h1>home page</h1>
       <button
         onClick={() => {
-          eventScope('peraScoped').dispatch({
-            eventName: 'pera',
-            payload: 1,
+          dispatch({
+            scope: 'person:zile',
+            dispatch: {
+              eventName: 'pera',
+              payload: 1,
+            },
           });
         }}
       >

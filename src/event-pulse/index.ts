@@ -1,14 +1,8 @@
-import { EventEntity } from './EventEntity';
-let eventHub = new EventEntity();
+import { EventManager } from './EventManager';
 
-// Export the necessary methods for use in other parts of the application
-function logHub() {
-  console.log('HUB', eventHub);
-}
-
-const dispatch = eventHub.dispatch;
-const subscribe = eventHub.subscribe;
-const eventInterceptor = eventHub.eventInterceptor.interceptor;
-const eventScope = eventHub.eventScope.bind(eventHub);
-
-export { dispatch, eventInterceptor, eventScope, logHub, subscribe, eventHub };
+let manager = new EventManager();
+const dispatch = manager.managerAction;
+const subscribe = manager.managerSubscribe;
+const eventInterceptor = manager.managerEventInterceptor;
+const configEventManager = manager.configEventManager;
+export { dispatch, eventInterceptor, subscribe, configEventManager };
