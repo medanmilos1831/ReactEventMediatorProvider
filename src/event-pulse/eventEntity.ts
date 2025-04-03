@@ -76,14 +76,8 @@ export class EventEntity extends EventTarget {
     // Dispatching the event, making it available for listeners.
 
     this.dispatchEvent(event);
-    // console.log('eeee', this.scopedEvents);
     if (this.scopedEvents['*']) {
-      const event = new CustomEvent('*', {
-        detail: {
-          payload: eventPayload, // The processed payload is included in the event's detail property.
-        },
-      });
-      this.dispatchEvent(event);
+      this.dispatchEvent(new CustomEvent('*', event));
     }
   };
 
