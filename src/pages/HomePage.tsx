@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { dispatch, subscribe } from '../event-pulse';
 import { ComponentOne } from './components/ComponentOne';
+import { user } from '../modules/user.module';
 const HomePage = () => {
-  let [d, e] = useState();
+  let [state, setState] = useState(0);
   useEffect(() => {
     let r = subscribe({
-      scope: 'person:zile',
+      scope: 'user',
       eventName: 'pera',
       callback(data) {
-        e(data.payload);
-        console.log('usao sam obde', data);
+        console.log('UI pera home');
       },
     });
+    console.log('r', r);
     return () => {
       r();
     };
@@ -22,17 +23,35 @@ const HomePage = () => {
       <button
         onClick={() => {
           dispatch({
-            scope: 'person:zile',
+            scope: 'User',
+            dispatch: {
+              eventName: 'fetchUser',
+              payload: {
+                id: 1,
+              },
+            },
+          });
+          dispatch({
+            scope: 'user',
             dispatch: {
               eventName: 'pera',
-              payload: 1,
+              payload: {
+                id: 1,
+              },
             },
           });
         }}
       >
         click me
       </button>
-      <ComponentOne />
+      <button
+        onClick={() => {
+          user.setSomeData('medan');
+        }}
+      >
+        set some data
+      </button>
+      {/* <ComponentOne /> */}
     </div>
   );
 };

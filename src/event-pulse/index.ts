@@ -5,4 +5,13 @@ const dispatch = manager.managerAction;
 const subscribe = manager.managerSubscribe;
 const eventInterceptor = manager.managerEventInterceptor;
 const configEventManager = manager.configEventManager;
-export { dispatch, eventInterceptor, subscribe, configEventManager };
+const autoBindListeners = manager.autoBindListeners;
+const logging = manager.logging;
+export {
+  dispatch,
+  eventInterceptor,
+  subscribe,
+  configEventManager,
+  autoBindListeners,
+  logging,
+};
