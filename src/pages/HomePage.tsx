@@ -1,25 +1,21 @@
-import { dispatch, eventInterceptor, subscribe } from '../event-pulse';
+import { useEffect, useState } from 'react';
+import { dispatch, subscribe } from '../event-pulse';
 import { ComponentOne } from './components/ComponentOne';
 const HomePage = () => {
-  subscribe({
-    scope: 'person:zile',
-    eventName: 'pera',
-    callback(data) {
-      console.log('usao sam obde', data);
-    },
-  });
-  eventInterceptor({
-    scope: 'person:zile',
-    eventName: 'pera',
-    callback(data) {
-      console.log('PRESRETAC', data.eventPayload);
-      return {
-        ppayload: data.eventPayload,
-        fname: 'Milos',
-      };
-      // console.log('samo', data);
-    },
-  });
+  let [d, e] = useState();
+  useEffect(() => {
+    let r = subscribe({
+      scope: 'person:zile',
+      eventName: 'pera',
+      callback(data) {
+        e(data.payload);
+        console.log('usao sam obde', data);
+      },
+    });
+    return () => {
+      r();
+    };
+  }, []);
   return (
     <div>
       <h1>home page</h1>

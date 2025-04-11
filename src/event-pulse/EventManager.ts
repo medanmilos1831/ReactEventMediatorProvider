@@ -58,11 +58,11 @@ export class EventManager {
     callback: (data: { payload: any }) => void;
   }) => {
     if (scope === 'global' || !scope) {
-      this.events.subscribe(eventName, callback);
-      return;
+      return this.events.subscribe(eventName, callback);
     }
     let arr = scope.split(':');
     let currentLevel = this.events;
+    let unsubscriber: (() => void) | undefined = undefined;
 
     arr.forEach((item, index) => {
       if (!currentLevel.scopedEvents[item]) {
@@ -70,11 +70,15 @@ export class EventManager {
       }
 
       if (index === arr.length - 1) {
-        currentLevel.scopedEvents[item].subscribe(eventName, callback);
+        unsubscriber = currentLevel.scopedEvents[item].subscribe(
+          eventName,
+          callback
+        );
       }
 
       currentLevel = currentLevel.scopedEvents[item];
     });
+    return unsubscriber!;
   };
 
   managerEventInterceptor = ({
@@ -103,15 +107,7 @@ export class EventManager {
     current.eventInterceptor.interceptor(callback, { eventName });
   };
 
-  configEventManager = (
-    Component: () => ReactNode,
-    config: {
-      logger: boolean;
-    }
-  ) => {
+  configEventManager = (config: { logger: boolean }) => {
     this.logger = config.logger;
-    return () => {
-      return createElement(Component);
-    };
   };
 }
