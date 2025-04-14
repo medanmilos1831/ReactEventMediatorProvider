@@ -16,20 +16,6 @@ const HomePage = () => {
   return (
     <div>
       <h1>home page</h1>
-      {/* <button
-        onClick={() => {
-          dispatch({
-            dispatch: {
-              eventName: 'pera',
-              payload: 1,
-            },
-          });
-        }}
-      >
-        click me
-      </button>
-      <button onClick={() => {}}>set some data</button> */}
-      {/* <ComponentOne /> */}
     </div>
   );
 };
