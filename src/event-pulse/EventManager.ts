@@ -1,4 +1,4 @@
-import { createElement, ReactNode } from 'react';
+import { subscribe } from '.';
 import { EventEntity } from './EventEntity';
 
 export class EventManager {
@@ -17,8 +17,8 @@ export class EventManager {
   }: {
     scope?: string;
     dispatch: {
-      eventName: string; // The name of the event.
-      payload?: any; // The payload to be sent with the event.
+      eventName: string;
+      payload?: any;
     };
   }) => {
     if (scope === 'global' || !scope) {
@@ -109,5 +109,26 @@ export class EventManager {
 
   configEventManager = (config: { logger: boolean }) => {
     this.logger = config.logger;
+  };
+
+  autoBindListeners(
+    object: any,
+    objMap: { [key: string]: { eventName: string }[] }
+  ) {
+    Object.entries(objMap).map(([k, v]: [string, any]) => {
+      v.forEach((item: any) => {
+        subscribe({
+          ...item,
+          scope: Object.getPrototypeOf(object).constructor.name,
+          callback(data: any) {
+            object[k](data.payload);
+          },
+        });
+      });
+    });
+  }
+
+  logging = () => {
+    console.log(this.events);
   };
 }
