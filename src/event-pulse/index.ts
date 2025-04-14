@@ -7,6 +7,7 @@ const eventInterceptor = manager.managerEventInterceptor;
 const configEventManager = manager.configEventManager;
 const autoBindListeners = manager.autoBindListeners;
 const logging = manager.logging;
+console.log('MANAGER', manager);
 export {
   dispatch,
   eventInterceptor,

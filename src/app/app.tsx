@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { configEventManager, logging } from '../event-pulse';
 import { HomePage } from '../pages/HomePage';
 import { AboutPage } from '../pages/AboutPage';
-import { ApiModule } from '../modules/api.module';
 configEventManager({
   logger: false,
 });
-new ApiModule();
+// new ApiModule();
 
 export const App = () => {
   const [page, setPage] = useState('home');

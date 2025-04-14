@@ -7,24 +7,24 @@ export const AboutPage = () => {
       AboutPage
       <button
         onClick={() => {
-          dispatch({
-            scope: 'User',
-            dispatch: {
-              eventName: 'fetchUser',
-              payload: {
-                id: 1,
-              },
-            },
-          });
-          dispatch({
-            scope: 'user',
-            dispatch: {
-              eventName: 'pera',
-              payload: {
-                id: 1,
-              },
-            },
-          });
+          // dispatch({
+          //   scope: 'User',
+          //   dispatch: {
+          //     eventName: 'fetchUser',
+          //     payload: {
+          //       id: 1,
+          //     },
+          //   },
+          // });
+          // dispatch({
+          //   scope: 'user',
+          //   dispatch: {
+          //     eventName: 'pera',
+          //     payload: {
+          //       id: 1,
+          //     },
+          //   },
+          // });
         }}
       >
         click me
