@@ -21,7 +21,7 @@ export default defineConfig({
   //  plugins: [ nxViteTsPaths() ],
   // },
   build: {
-    outDir: './dist/react-event-mediator-provider',
+    outDir: './build',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
