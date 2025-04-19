@@ -1,15 +1,14 @@
-import { useState } from 'react';
-import { configEventManager, logging } from '../event-pulse';
-import { HomePage } from '../pages/HomePage';
-import { AboutPage } from '../pages/AboutPage';
+import { RouterProvider } from 'react-router-dom';
+import { configEventManager } from '../event-pulse';
+import { router } from '../router/router';
 configEventManager({
   logger: false,
 });
 
 export const App = () => {
   return (
-    <div>
-      <HomePage />
-    </div>
+    <>
+      <RouterProvider router={router()} />
+    </>
   );
 };
