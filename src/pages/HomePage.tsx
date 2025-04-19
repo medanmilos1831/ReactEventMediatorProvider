@@ -1,21 +1,46 @@
-import { useEffect, useState } from 'react';
-import { dispatch, subscribe, logging } from '../event-pulse';
+import { OverlayController } from '../overlayManager/OverlayController';
+import { Drawer } from '../drawer';
+// import { Modal } from '../modal';
+import { ModalOne } from '../modal/modals/ModalOne';
 import { ComponentOne } from './components/ComponentOne';
-import { user } from '../modules/user.module';
+import { Modal } from 'antd';
+
 const HomePage = () => {
-  useEffect(() => {
-    subscribe({
-      eventName: 'pera',
-      callback(data) {
-        // execute on event;
-      },
-    });
-    logging();
-    return () => {};
-  }, []);
   return (
     <div>
       <h1>home page</h1>
+      <OverlayController scope="modal" eventName="modalOne">
+        {({ data, off, status }) => {
+          return (
+            <Modal
+              open={status === 'on' ? true : false}
+              onCancel={() => {
+                off();
+              }}
+              destroyOnClose
+            >
+              <>some element</>
+            </Modal>
+          );
+        }}
+      </OverlayController>
+      {/* <Modal
+        modalName="modalOne"
+        modalProps={(data: any) => {
+          return {
+            title: data?.id ? 'iame' : 'nema',
+          };
+        }}
+      >
+        <ModalOne fname={'John'}></ModalOne>
+      </Modal>
+
+      <Drawer drawerName={'drawerOne'}>
+        {(props: any) => {
+          return <>pera</>;
+        }}
+      </Drawer> */}
+      <ComponentOne />
     </div>
   );
 };

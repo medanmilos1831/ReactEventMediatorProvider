@@ -13,22 +13,21 @@ export class EventManager {
   }
   managerAction = ({
     scope,
-    dispatch,
+    eventName,
+    payload,
   }: {
     scope?: string;
-    dispatch: {
-      eventName: string;
-      payload?: any;
-    };
+    eventName: string;
+    payload?: any;
   }) => {
     if (scope === 'global' || !scope) {
       this.log('dispatch', {
         Scope: 'GLOBAL',
-        Event: dispatch.eventName,
-        Payload: dispatch.payload ?? 'No Payload',
+        Event: eventName,
+        Payload: payload ?? 'No Payload',
       });
 
-      this.events.dispatch(dispatch);
+      this.events.dispatch({ eventName, payload: payload || undefined });
       return;
     }
     let current = this.events;
@@ -42,10 +41,13 @@ export class EventManager {
 
     this.log('dispatch', {
       Scope: scope,
-      Event: dispatch.eventName,
-      Payload: dispatch.payload ?? 'No Payload',
+      Event: eventName,
+      Payload: payload ?? 'No Payload',
     });
-    current.dispatch(dispatch);
+    current.dispatch({
+      eventName,
+      payload: payload || undefined,
+    });
   };
 
   managerSubscribe = ({
