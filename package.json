@@ -1,11 +1,14 @@
 {
+  "homepage": "http://medanmilos1831.github.io/ReactEventMediatorProvider",
   "name": "@react-event-mediator-provider/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build -d build"
   },
   "private": true,
   "dependencies": {
