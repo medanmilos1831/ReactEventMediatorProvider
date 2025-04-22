@@ -1,6 +1,5 @@
 import { createBrowserRouter, NavLink, Outlet } from 'react-router-dom';
 import { ScrollProvider } from '../components';
-import { Col, Row } from 'antd';
 import { Introduction } from '../pages/Introduction';
 
 export const router = () =>
@@ -15,57 +14,27 @@ export const router = () =>
               background: '#0f0b2b',
             }}
           >
-            <Row
-              style={{
-                height: '100%',
-              }}
-            >
-              <Col
-                span={4}
-                style={{
-                  color: 'white',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                  background: '#141226',
-                }}
-              >
-                <NavLink
-                  style={{
-                    color: 'white',
-                  }}
-                  to={'/'}
-                >
+            <div className="flex h-full">
+              <div className="flex flex-col h-full bg-[#141226] text-white w-1/5 p-4 space-y-4">
+                <NavLink to="/" className="text-white hover:underline">
                   Introduction
                 </NavLink>
-                <NavLink
-                  style={{
-                    color: 'white',
-                  }}
-                  to={'/subscribe'}
-                >
+                <NavLink to="/subscribe" className="text-white hover:underline">
                   sub
                 </NavLink>
-                <NavLink
-                  style={{
-                    color: 'white',
-                  }}
-                  to={'/dispatch'}
-                >
+                <NavLink to="/dispatch" className="text-white hover:underline">
                   dis
                 </NavLink>
-              </Col>
-              <Col
-                span={20}
-                style={{
-                  padding: '4rem',
-                }}
-              >
+              </div>
+
+              <div className="w-4/5 px-16 relative h-full">
                 <ScrollProvider>
-                  <Outlet />
+                  <ScrollProvider.Container>
+                    <Outlet />
+                  </ScrollProvider.Container>
                 </ScrollProvider>
-              </Col>
-            </Row>
+              </div>
+            </div>
           </div>
         ),
         children: [
