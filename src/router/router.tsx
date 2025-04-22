@@ -1,6 +1,10 @@
 import { createBrowserRouter, NavLink, Outlet } from 'react-router-dom';
 import { ScrollProvider } from '../components';
 import { Introduction } from '../pages/Introduction';
+import { QuickStart } from '../pages/QuickStart';
+import { CoreConcepts } from '../pages/CoreConcepts';
+import { ApiReference } from '../pages/ApiReference';
+import { AdvancedTopics } from '../pages/AdvancedTopics';
 
 export const router = () =>
   createBrowserRouter(
@@ -19,18 +23,35 @@ export const router = () =>
                 <NavLink to="/" className="text-white hover:underline">
                   Introduction
                 </NavLink>
-                <NavLink to="/subscribe" className="text-white hover:underline">
-                  sub
+                <NavLink
+                  to="/quick-start"
+                  className="text-white hover:underline"
+                >
+                  Quick start
                 </NavLink>
-                <NavLink to="/dispatch" className="text-white hover:underline">
-                  dis
+                <NavLink to="/core" className="text-white hover:underline">
+                  Core Concepts
+                </NavLink>
+                <NavLink
+                  to="/api-reference"
+                  className="text-white hover:underline"
+                >
+                  Api Reference
+                </NavLink>
+                <NavLink
+                  to="/advanced-topics"
+                  className="text-white hover:underline"
+                >
+                  Advanced Topics
                 </NavLink>
               </div>
 
-              <div className="w-4/5 px-16 relative h-full">
+              <div className="w-4/5 relative h-full">
                 <ScrollProvider>
                   <ScrollProvider.Container>
-                    <Outlet />
+                    <div className="px-16">
+                      <Outlet />
+                    </div>
                   </ScrollProvider.Container>
                 </ScrollProvider>
               </div>
@@ -43,12 +64,20 @@ export const router = () =>
             element: <Introduction />,
           },
           {
-            path: '/subscribe',
-            element: <>subscribe</>,
+            path: '/quick-start',
+            element: <QuickStart />,
           },
           {
-            path: '/dispatch',
-            element: <>dispatch</>,
+            path: '/core',
+            element: <CoreConcepts />,
+          },
+          {
+            path: '/api-reference',
+            element: <ApiReference />,
+          },
+          {
+            path: '/advanced-topics',
+            element: <AdvancedTopics />,
           },
         ],
       },
