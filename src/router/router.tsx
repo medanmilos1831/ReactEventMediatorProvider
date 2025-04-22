@@ -5,6 +5,8 @@ import { QuickStart } from '../pages/QuickStart';
 import { CoreConcepts } from '../pages/CoreConcepts';
 import { ApiReference } from '../pages/ApiReference';
 import { AdvancedTopics } from '../pages/AdvancedTopics';
+import { Examples } from '../pages/Examples';
+import { OverlayExample } from '../pages/examples/index';
 
 export const router = () =>
   createBrowserRouter(
@@ -44,6 +46,9 @@ export const router = () =>
                 >
                   Advanced Topics
                 </NavLink>
+                <NavLink to="/examples" className="text-white hover:underline">
+                  Examples
+                </NavLink>
               </div>
 
               <div className="w-4/5 relative h-full">
@@ -78,6 +83,20 @@ export const router = () =>
           {
             path: '/advanced-topics',
             element: <AdvancedTopics />,
+          },
+          {
+            path: '/examples',
+            element: <Outlet />,
+            children: [
+              {
+                index: true,
+                element: <Examples />,
+              },
+              {
+                path: 'overlay',
+                element: <OverlayExample />,
+              },
+            ],
           },
         ],
       },
