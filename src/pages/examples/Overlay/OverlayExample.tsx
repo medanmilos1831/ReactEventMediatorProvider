@@ -1,9 +1,4 @@
-import { Button, Row, Space } from 'antd';
 import { CopyBlock, dracula } from 'react-code-blocks';
-import { OverlayController } from './overlayManager/OverlayController';
-import { overlayManager } from './overlayManager/OverlayManager';
-import { Modal } from './modal';
-import { Drawer } from './drawer';
 import ShowCase from './ShowCase';
 
 const OverlayExample = () => {

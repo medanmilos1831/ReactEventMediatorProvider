@@ -22,31 +22,64 @@ export const router = () =>
           >
             <div className="flex h-full">
               <div className="flex flex-col h-full bg-[#141226] text-white w-1/5 p-4 space-y-4">
-                <NavLink to="/" className="text-white hover:underline">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `text-white no-underline hover:text-gray-300 ${
+                      isActive ? 'font-bold' : ''
+                    }`
+                  }
+                >
                   Introduction
                 </NavLink>
                 <NavLink
                   to="/quick-start"
-                  className="text-white hover:underline"
+                  className={({ isActive }) =>
+                    `text-white no-underline hover:text-gray-300 ${
+                      isActive ? 'font-bold' : ''
+                    }`
+                  }
                 >
-                  Quick start
+                  Quick Start
                 </NavLink>
-                <NavLink to="/core" className="text-white hover:underline">
+                <NavLink
+                  to="/core"
+                  className={({ isActive }) =>
+                    `text-white no-underline hover:text-gray-300 ${
+                      isActive ? 'font-bold' : ''
+                    }`
+                  }
+                >
                   Core Concepts
                 </NavLink>
                 <NavLink
                   to="/api-reference"
-                  className="text-white hover:underline"
+                  className={({ isActive }) =>
+                    `text-white no-underline hover:text-gray-300 ${
+                      isActive ? 'font-bold' : ''
+                    }`
+                  }
                 >
-                  Api Reference
+                  API Reference
                 </NavLink>
                 <NavLink
                   to="/advanced-topics"
-                  className="text-white hover:underline"
+                  className={({ isActive }) =>
+                    `text-white no-underline hover:text-gray-300 ${
+                      isActive ? 'font-bold' : ''
+                    }`
+                  }
                 >
                   Advanced Topics
                 </NavLink>
-                <NavLink to="/examples" className="text-white hover:underline">
+                <NavLink
+                  to="/examples"
+                  className={({ isActive }) =>
+                    `text-white no-underline hover:text-gray-300 ${
+                      isActive ? 'font-bold' : ''
+                    }`
+                  }
+                >
                   Examples
                 </NavLink>
               </div>
