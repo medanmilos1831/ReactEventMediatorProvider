@@ -1,4 +1,4 @@
-// import { Modal } from '../modal';
+import graph from '../assets/graph.png';
 
 const Introduction = () => {
   return (
@@ -13,6 +13,8 @@ const Introduction = () => {
         model. No need for heavy global state managers, prop drilling, or
         boilerplate setups. Just events — clean and scoped.
       </p>
+
+      <img src={graph} className="mb-10" />
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">Why Event Pulse?</h2>
       <p className="mb-6 leading-relaxed">
