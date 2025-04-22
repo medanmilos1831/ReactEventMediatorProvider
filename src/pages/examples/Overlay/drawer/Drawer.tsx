@@ -21,21 +21,21 @@ export const Drawer = ({
 }: DrawerPropsWithChildren) => {
   return (
     <OverlayController eventName={eventName} scope={ON_OFF_ENTITIES.DRAWER}>
-      {({ changeStatus, data, status }) => {
+      {({ off, data, status }) => {
         const props = drawerProps ? drawerProps(data) : {};
         return (
           <ANTDDrawer
             {...props}
             open={status === STATUS_ENUM.ON}
             onClose={() => {
-              changeStatus(STATUS_ENUM.OFF);
+              off();
             }}
             destroyOnClose
           >
             {typeof children === 'function'
               ? children({
                   drawerPayload: data,
-                  onClose: () => changeStatus(STATUS_ENUM.OFF),
+                  onClose: () => off(),
                   status,
                 })
               : children}
