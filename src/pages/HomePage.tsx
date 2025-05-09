@@ -1,48 +1,67 @@
-import { OverlayController } from '../overlayManager/OverlayController';
-import { Drawer } from '../drawer';
-// import { Modal } from '../modal';
-import { ModalOne } from '../modal/modals/ModalOne';
-import { ComponentOne } from './components/ComponentOne';
-import { Modal } from 'antd';
+import { Button } from 'antd';
+import { useEffect } from 'react';
+import { dispatch, subscribe, eventInterceptor, logging } from '../event-pulse';
 
-const HomePage = () => {
+export default function HomePage() {
+  let r = subscribe({
+    scope: 'someScope:one',
+    eventName: 'someEvent',
+    callback(data) {
+      console.log('events callback', data);
+      // logging();
+    },
+  });
+
+  eventInterceptor({
+    // scope: 'someScope:onepera',
+    eventName: 'someEvent',
+    callback(data) {
+      console.log('data', data);
+      return 2;
+    },
+  });
+
+  logging();
+  // useEffect(() => {
+  //   subscribe({
+  //     scope: 'someScope:one',
+  //     eventName: 'someEvent',
+  //     callback(data) {
+  //       console.log('events callback');
+  //       // logging();
+  //     },
+  //   });
+  //   logging();
+  // }, []);
   return (
     <div>
-      <h1>home page</h1>
-      <OverlayController scope="modal" eventName="modalOne">
-        {({ data, off, status }) => {
-          return (
-            <Modal
-              open={status === 'on' ? true : false}
-              onCancel={() => {
-                off();
-              }}
-              destroyOnClose
-            >
-              <>some element</>
-            </Modal>
-          );
+      <h1>Home page</h1>
+      <br />
+      <Button
+        onClick={() => {
+          dispatch({
+            scope: 'someScope:one',
+            eventName: 'someEvent',
+            payload: 1,
+          });
         }}
-      </OverlayController>
-      {/* <Modal
-        modalName="modalOne"
-        modalProps={(data: any) => {
-          return {
-            title: data?.id ? 'iame' : 'nema',
-          };
-        }}
+        type="primary"
       >
-        <ModalOne fname={'John'}></ModalOne>
-      </Modal>
-
-      <Drawer drawerName={'drawerOne'}>
-        {(props: any) => {
-          return <>pera</>;
+        click me
+      </Button>
+      <Button
+        onClick={() => {
+          r();
+          // dispatch({
+          //   scope: 'someScope:one',
+          //   eventName: 'someEvent',
+          //   payload: 1,
+          // });
         }}
-      </Drawer> */}
-      <ComponentOne />
+        type="primary"
+      >
+        unsubscribe
+      </Button>
     </div>
   );
-};
-
-export { HomePage };
+}

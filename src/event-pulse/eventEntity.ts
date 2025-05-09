@@ -30,7 +30,9 @@ export class EventEntity extends EventTarget {
    * This service manages event subscriptions and ensures that events are correctly scoped for specific contexts.
    */
   entityName?: string;
-  scopedEvents: { [key: string]: EventEntity } = {};
+  scopedEvents: Map<string, EventEntity> = new Map();
+
+  listeners = new Set();
 
   /**
    * Constructor for creating an instance of `EventEntity`.
@@ -76,9 +78,12 @@ export class EventEntity extends EventTarget {
     // Dispatching the event, making it available for listeners.
 
     this.dispatchEvent(event);
-    if (this.scopedEvents['*']) {
+    if (this.scopedEvents.has('*')) {
       this.dispatchEvent(new CustomEvent('*', event));
     }
+    // if (this.scopedEvents['*']) {
+    //   this.dispatchEvent(new CustomEvent('*', event));
+    // }
   };
 
   /**
@@ -94,9 +99,11 @@ export class EventEntity extends EventTarget {
    * unsubscribe(); // Unsubscribe from the event.
    */
   subscribe = (eventName: string, callback: subscriberCallbackType) => {
+    this.listeners.add(eventName);
     if (eventName === '*') {
-      if (!this.scopedEvents[eventName]) {
-        this.scopedEvents[eventName] = new EventEntity(eventName);
+      if (!this.scopedEvents.has(eventName)) {
+        this.scopedEvents.set(eventName, new EventEntity(eventName));
+        // this.scopedEvents[eventName] = new EventEntity(eventName);
       }
     }
 
@@ -109,6 +116,9 @@ export class EventEntity extends EventTarget {
     this.addEventListener(eventName, handler);
 
     // Return a function that removes the event listener when called.
-    return () => this.removeEventListener(eventName, handler);
+    return () => {
+      this.listeners.delete(eventName);
+      this.removeEventListener(eventName, handler);
+    };
   };
 }

@@ -1,14 +1,9 @@
-import { RouterProvider } from 'react-router-dom';
+import HomePage from '../pages/HomePage';
 import { configEventManager } from '../event-pulse';
-import { router } from '../router/router';
 configEventManager({
   logger: false,
 });
 
 export const App = () => {
-  return (
-    <>
-      <RouterProvider router={router()} />
-    </>
-  );
+  return <HomePage />;
 };

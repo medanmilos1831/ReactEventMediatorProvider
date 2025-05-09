@@ -1,90 +1,30 @@
-import { subscribe } from '.';
+import { subscribe } from './subscribe';
+import { action } from './action';
+import { GLOBAL_EVENT_ENTITY } from './constants';
 import { EventEntity } from './EventEntity';
+import { actionType, subscribeType } from './types';
 
 export class EventManager {
   events = new EventEntity();
   logger: boolean = false;
-  private log(type: 'dispatch' | 'subscribe', data: Record<string, any>) {
+  protected log(type: 'dispatch' | 'subscribe', data: Record<string, any>) {
     if (this.logger) {
       console.group(`[EventManager] ${type.toUpperCase()}`);
       console.table(data);
       console.groupEnd();
     }
   }
-  managerAction = ({
-    scope,
-    eventName,
-    payload,
-  }: {
-    scope?: string;
-    eventName: string;
-    payload?: any;
-  }) => {
-    if (scope === 'global' || !scope) {
-      this.log('dispatch', {
-        Scope: 'GLOBAL',
-        Event: eventName,
-        Payload: payload ?? 'No Payload',
-      });
 
-      this.events.dispatch({ eventName, payload: payload || undefined });
-      return;
-    }
-    let current = this.events;
-    for (const item of scope.split(':')) {
-      if (!current.scopedEvents[item]) {
-        console.warn(`Scope "${scope}" does not exist.`);
-        return;
-      }
-      current = current.scopedEvents[item];
-    }
-
-    this.log('dispatch', {
-      Scope: scope,
-      Event: eventName,
-      Payload: payload ?? 'No Payload',
-    });
-    current.dispatch({
-      eventName,
-      payload: payload || undefined,
-    });
+  managerAction = (obj: actionType) => {
+    action.call(this, obj);
   };
 
-  managerSubscribe = ({
-    scope,
-    eventName,
-    callback,
-  }: {
-    scope?: string;
-    eventName: string;
-    callback: (data: { payload: any }) => void;
-  }) => {
-    if (scope === 'global' || !scope) {
-      return this.events.subscribe(eventName, callback);
-    }
-    let arr = scope.split(':');
-    let currentLevel = this.events;
-    let unsubscriber: (() => void) | undefined = undefined;
-
-    arr.forEach((item, index) => {
-      if (!currentLevel.scopedEvents[item]) {
-        currentLevel.scopedEvents[item] = new EventEntity(item);
-      }
-
-      if (index === arr.length - 1) {
-        unsubscriber = currentLevel.scopedEvents[item].subscribe(
-          eventName,
-          callback
-        );
-      }
-
-      currentLevel = currentLevel.scopedEvents[item];
-    });
-    return unsubscriber!;
+  managerSubscribe = (obj: subscribeType) => {
+    return subscribe.call(this, obj);
   };
 
   managerEventInterceptor = ({
-    scope,
+    scope = GLOBAL_EVENT_ENTITY,
     eventName,
     callback,
   }: {
@@ -92,18 +32,19 @@ export class EventManager {
     eventName: string;
     callback: (data: { eventPayload: any }) => any;
   }) => {
-    if (scope === 'global' || !scope) {
+    if (!scope || scope === GLOBAL_EVENT_ENTITY) {
       this.events.eventInterceptor.interceptor(callback, { eventName });
       return;
     }
 
+    let scopes = scope?.split(':').filter(Boolean) ?? [];
     let current = this.events;
-    for (const item of scope.split(':')) {
-      if (!current.scopedEvents[item]) {
+    for (const item of scopes) {
+      if (!current.scopedEvents.has(item)) {
         console.warn(`Scope "${scope}" does not exist.`);
         return;
       }
-      current = current.scopedEvents[item];
+      current = current.scopedEvents.get(item)!;
     }
 
     current.eventInterceptor.interceptor(callback, { eventName });
@@ -119,7 +60,7 @@ export class EventManager {
   ) {
     Object.entries(objMap).map(([k, v]: [string, any]) => {
       v.forEach((item: any) => {
-        subscribe({
+        subscribe.call(this, {
           ...item,
           scope: Object.getPrototypeOf(object).constructor.name,
           callback(data: any) {
