@@ -39,27 +39,9 @@ export function subscribe(
   this: EventManager,
   { scope = GLOBAL_EVENT_ENTITY, eventName, callback }: subscribeType
 ) {
-  if (!scope || scope === GLOBAL_EVENT_ENTITY) {
-    return this.events.subscribe(eventName, callback);
-  }
-
-  function getOrCreateScope(entity: EventEntity, scope: string): EventEntity {
-    if (!entity.scopedEvents.has(scope)) {
-      entity.scopedEvents.set(scope, new EventEntity(scope));
-    }
-    return entity.scopedEvents.get(scope)!;
-  }
-
-  let scopes = scope?.split(':').filter(Boolean) ?? [];
-  let currentLevel = this.events;
-  let unsubscriber: () => void = () => {};
-
-  scopes.forEach((item, index) => {
-    currentLevel = getOrCreateScope(currentLevel, item);
-    if (index === scopes.length - 1) {
-      unsubscriber = currentLevel.subscribe(eventName, callback);
-    }
-  });
-
-  return unsubscriber!;
+  let unsubscribe: () => void = () => {};
+  let target =
+    scope === GLOBAL_EVENT_ENTITY ? this.events : this.scopesIterator(scope);
+  unsubscribe = target.subscribe(eventName, callback);
+  return unsubscribe;
 }

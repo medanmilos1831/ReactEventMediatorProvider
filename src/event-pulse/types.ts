@@ -9,3 +9,9 @@ export type subscribeType = {
   eventName: string;
   callback: (data: { payload: any }) => void;
 };
+
+export type interceptorType = {
+  scope?: string;
+  eventName: string;
+  callback: (data: any) => any;
+};

@@ -45,7 +45,7 @@ export function action(
   // Dispatch the event with the given payload
   current.dispatch({
     eventName,
-    payload: payload || undefined,
+    payload,
   });
 
   // Log the dispatch for debugging purposes

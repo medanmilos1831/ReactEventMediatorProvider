@@ -1,38 +1,39 @@
 import { Button } from 'antd';
 import { useEffect } from 'react';
-import { dispatch, subscribe, eventInterceptor, logging } from '../event-pulse';
+import {
+  dispatch,
+  subscribe,
+  eventInterceptor,
+  logging,
+  autoBindListeners,
+} from '../event-pulse';
+
+class Person {
+  constructor() {
+    autoBindListeners(this, {
+      printFname: [
+        {
+          eventName: 'nekiEvent',
+        },
+      ],
+    });
+  }
+
+  printFname() {
+    console.log('print');
+  }
+}
+
+new Person();
 
 export default function HomePage() {
-  let r = subscribe({
-    scope: 'someScope:one',
+  let u = subscribe({
     eventName: 'someEvent',
     callback(data) {
       console.log('events callback', data);
-      // logging();
     },
   });
-
-  eventInterceptor({
-    // scope: 'someScope:onepera',
-    eventName: 'someEvent',
-    callback(data) {
-      console.log('data', data);
-      return 2;
-    },
-  });
-
   logging();
-  // useEffect(() => {
-  //   subscribe({
-  //     scope: 'someScope:one',
-  //     eventName: 'someEvent',
-  //     callback(data) {
-  //       console.log('events callback');
-  //       // logging();
-  //     },
-  //   });
-  //   logging();
-  // }, []);
   return (
     <div>
       <h1>Home page</h1>
@@ -40,9 +41,8 @@ export default function HomePage() {
       <Button
         onClick={() => {
           dispatch({
-            scope: 'someScope:one',
             eventName: 'someEvent',
-            payload: 1,
+            payload: 0,
           });
         }}
         type="primary"
@@ -51,12 +51,20 @@ export default function HomePage() {
       </Button>
       <Button
         onClick={() => {
-          r();
-          // dispatch({
-          //   scope: 'someScope:one',
-          //   eventName: 'someEvent',
-          //   payload: 1,
-          // });
+          dispatch({
+            scope: 'Person',
+            eventName: 'nekiEvent',
+            payload: 0,
+          });
+        }}
+        type="primary"
+      >
+        click me person module
+      </Button>
+      <Button
+        onClick={() => {
+          u();
+          logging();
         }}
         type="primary"
       >
