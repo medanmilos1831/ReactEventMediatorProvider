@@ -1,8 +1,9 @@
-import { subscribe } from './subscribe';
 import { action } from './action';
 import { GLOBAL_EVENT_ENTITY } from './constants';
 import { EventEntity } from './EventEntity';
-import { actionType, subscribeType } from './types';
+import { interceptor } from './interceptor';
+import { subscribe } from './subscribe';
+import { actionType, interceptorType, subscribeType } from './types';
 
 export class EventManager {
   events = new EventEntity();
@@ -15,63 +16,47 @@ export class EventManager {
     }
   }
 
+  protected scopesIterator = (scope: string) => {
+    let scopes = scope.split(':').filter(Boolean) ?? [];
+    let currentLevel = this.events;
+    scopes.forEach((item) => {
+      if (!currentLevel.scopedEvents.has(item)) {
+        currentLevel.scopedEvents.set(item, new EventEntity(item));
+      }
+      currentLevel = currentLevel.scopedEvents.get(item)!;
+    });
+    return currentLevel;
+  };
+
   managerAction = (obj: actionType) => {
     action.call(this, obj);
   };
 
-  managerSubscribe = (obj: subscribeType) => {
-    return subscribe.call(this, obj);
+  managerSubscribe = ({
+    scope = GLOBAL_EVENT_ENTITY,
+    eventName,
+    callback,
+  }: subscribeType) => {
+    return subscribe.call(this, { scope, eventName, callback });
   };
 
   managerEventInterceptor = ({
     scope = GLOBAL_EVENT_ENTITY,
     eventName,
     callback,
-  }: {
-    scope?: string;
-    eventName: string;
-    callback: (data: { eventPayload: any }) => any;
-  }) => {
-    if (!scope || scope === GLOBAL_EVENT_ENTITY) {
-      this.events.eventInterceptor.interceptor(callback, { eventName });
-      return;
-    }
-
-    let scopes = scope?.split(':').filter(Boolean) ?? [];
-    let current = this.events;
-    for (const item of scopes) {
-      if (!current.scopedEvents.has(item)) {
-        console.warn(`Scope "${scope}" does not exist.`);
-        return;
-      }
-      current = current.scopedEvents.get(item)!;
-    }
-
-    current.eventInterceptor.interceptor(callback, { eventName });
+  }: interceptorType) => {
+    interceptor.call(this, {
+      scope,
+      eventName,
+      callback,
+    });
   };
 
   configEventManager = (config: { logger: boolean }) => {
     this.logger = config.logger;
   };
 
-  autoBindListeners(
-    object: any,
-    objMap: { [key: string]: { eventName: string }[] }
-  ) {
-    Object.entries(objMap).map(([k, v]: [string, any]) => {
-      v.forEach((item: any) => {
-        subscribe.call(this, {
-          ...item,
-          scope: Object.getPrototypeOf(object).constructor.name,
-          callback(data: any) {
-            object[k](data.payload);
-          },
-        });
-      });
-    });
-  }
-
   logging = () => {
-    console.log(this.events);
+    console.log(this);
   };
 }
