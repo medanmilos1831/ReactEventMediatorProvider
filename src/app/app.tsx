@@ -1,5 +1,5 @@
 import HomePage from '../pages/HomePage';
-import { configEventManager } from '../event-pulse';
+import { configEventManager } from '../scoped-observer';
 configEventManager({
   logger: false,
 });

@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import { dispatch, logging, subscribe } from '../event-pulse';
+import { dispatch, logging, subscribe } from '../scoped-observer';
 
 export default function HomePage() {
   let u = subscribe({
