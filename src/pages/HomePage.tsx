@@ -1,30 +1,5 @@
 import { Button } from 'antd';
-import { useEffect } from 'react';
-import {
-  dispatch,
-  subscribe,
-  eventInterceptor,
-  logging,
-  autoBindListeners,
-} from '../event-pulse';
-
-class Person {
-  constructor() {
-    autoBindListeners(this, {
-      printFname: [
-        {
-          eventName: 'nekiEvent',
-        },
-      ],
-    });
-  }
-
-  printFname() {
-    console.log('print');
-  }
-}
-
-new Person();
+import { dispatch, logging, subscribe } from '../event-pulse';
 
 export default function HomePage() {
   let u = subscribe({
