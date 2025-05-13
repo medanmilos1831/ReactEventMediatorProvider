@@ -28,8 +28,16 @@ export class EventManager {
     return currentLevel;
   };
 
-  managerAction = (obj: actionType) => {
-    action.call(this, obj);
+  managerAction = ({
+    scope = GLOBAL_EVENT_ENTITY,
+    eventName,
+    payload,
+  }: actionType) => {
+    action.call(this, {
+      scope,
+      eventName,
+      payload,
+    });
   };
 
   managerSubscribe = ({

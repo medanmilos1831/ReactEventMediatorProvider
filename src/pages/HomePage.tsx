@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import { dispatch, logging, subscribe } from '../scoped-observer';
 
 export default function HomePage() {
-  let u = subscribe({
+  const unsubscribe = subscribe({
     eventName: 'someEvent',
     callback(data) {
       console.log('events callback', data);
@@ -27,8 +27,7 @@ export default function HomePage() {
       <Button
         onClick={() => {
           dispatch({
-            scope: 'Person',
-            eventName: 'nekiEvent',
+            eventName: 'someEvent',
             payload: 0,
           });
         }}
@@ -38,7 +37,6 @@ export default function HomePage() {
       </Button>
       <Button
         onClick={() => {
-          u();
           logging();
         }}
         type="primary"
