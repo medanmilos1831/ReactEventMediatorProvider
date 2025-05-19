@@ -19,7 +19,9 @@
     "gh-pages": "^6.3.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-router-dom": "^7.5.1"
+    "react-router-dom": "^7.5.1",
+    "scoped-observer": "^1.0.4",
+    "scoped-observer-store-react": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

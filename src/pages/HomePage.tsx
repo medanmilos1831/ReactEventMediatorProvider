@@ -1,19 +1,47 @@
 import { Button } from 'antd';
-import { dispatch, logging, subscribe } from '../scoped-observer';
+import { subscribe, dispatch, logging } from 'scoped-observer';
+import { ModulesMap, mutate, useSubscribe } from 'scoped-observer-store-react';
+type CounterData = {
+  counter: number;
+};
 
+type StoreModules = ModulesMap<{
+  counter: CounterData;
+}>;
 export default function HomePage() {
-  const unsubscribe = subscribe({
-    eventName: 'someEvent',
-    callback(data) {
-      console.log('events callback', data);
+  // const unsubscribe = subscribe({
+  //   eventName: 'someEvent',
+  //   callback(data) {
+  //     console.log('events callback', data);
+  //   },
+  // });
+  // logging();
+  const { result } = useSubscribe(
+    (state: StoreModules) => {
+      return state.counter.data.counter;
     },
-  });
-  logging();
+    ['nekiEvent']
+  );
+  console.log('state', result);
   return (
     <div>
       <h1>Home page</h1>
       <br />
-      <Button
+      <button
+        onClick={() => {
+          mutate(
+            {
+              scope: 'counter',
+              commit: 'updateCounter',
+              payload: 1,
+            },
+            ['nekiEvent']
+          );
+        }}
+      >
+        milos
+      </button>
+      {/* <Button
         onClick={() => {
           dispatch({
             eventName: 'someEvent',
@@ -42,7 +70,7 @@ export default function HomePage() {
         type="primary"
       >
         unsubscribe
-      </Button>
+      </Button> */}
     </div>
   );
 }
