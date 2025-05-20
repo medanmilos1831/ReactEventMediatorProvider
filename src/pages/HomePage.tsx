@@ -1,11 +1,15 @@
-import { OnOffManagerWrapper, onOffMutate } from '../EventToggleManager';
+import { Modal } from 'antd';
+import {
+  EventToggleManagerWrapper,
+  eventToggleHandler,
+} from '../EventToggleManager';
 
 const DeepNestedComponent = () => {
   return (
     <>
       <button
         onClick={() => {
-          onOffMutate({
+          eventToggleHandler({
             name: 'one',
             payload: 1,
           });
@@ -17,25 +21,55 @@ const DeepNestedComponent = () => {
   );
 };
 
+const ModalComponent = () => {
+  return <>ModalComponent</>;
+};
+
 export default function HomePage() {
   return (
     <div>
-      <OnOffManagerWrapper name="one">
-        {({ status, payload }) => {
-          console.log('one status', status, payload);
-          return <>one</>;
+      <EventToggleManagerWrapper name="one">
+        {({ status, payload, toggle }) => {
+          return (
+            <Modal
+              open={status}
+              onCancel={() => {
+                toggle();
+              }}
+              onOk={() => {
+                eventToggleHandler({
+                  name: 'two',
+                });
+              }}
+            >
+              <ModalComponent />
+            </Modal>
+          );
         }}
-      </OnOffManagerWrapper>
-      <OnOffManagerWrapper name="two">
-        {({ status }) => {
-          console.log('two status', status);
-          return <>two</>;
+      </EventToggleManagerWrapper>
+      <EventToggleManagerWrapper name="two">
+        {({ status, payload, toggle }) => {
+          return (
+            <Modal
+              open={status}
+              onCancel={() => {
+                toggle();
+              }}
+              onOk={() => {
+                console.log('okkkk');
+              }}
+            >
+              <>
+                <h1>Two modal</h1>
+              </>
+            </Modal>
+          );
         }}
-      </OnOffManagerWrapper>
+      </EventToggleManagerWrapper>
       <DeepNestedComponent />
       <button
         onClick={() => {
-          onOffMutate({
+          eventToggleHandler({
             name: 'two',
           });
         }}
