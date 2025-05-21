@@ -2,7 +2,7 @@ import { Modal } from 'antd';
 import {
   EventToggleManagerWrapper,
   eventToggleHandler,
-} from '../EventToggleManager';
+} from 'scoped-observer-toggle-manager-react';
 
 const DeepNestedComponent = () => {
   return (
@@ -47,35 +47,7 @@ export default function HomePage() {
           );
         }}
       </EventToggleManagerWrapper>
-      <EventToggleManagerWrapper name="two">
-        {({ status, payload, toggle }) => {
-          return (
-            <Modal
-              open={status}
-              onCancel={() => {
-                toggle();
-              }}
-              onOk={() => {
-                console.log('okkkk');
-              }}
-            >
-              <>
-                <h1>Two modal</h1>
-              </>
-            </Modal>
-          );
-        }}
-      </EventToggleManagerWrapper>
       <DeepNestedComponent />
-      <button
-        onClick={() => {
-          eventToggleHandler({
-            name: 'two',
-          });
-        }}
-      >
-        click me two
-      </button>
     </div>
   );
 }
