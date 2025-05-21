@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { dispatch, subscribe } from 'scoped-observer';
-import { IEventToggleManagerWrapperState } from './types';
-import { EventScope } from './EventToggleManager';
+import { IToggleState } from './types';
+import { EventScope } from './EventScope';
 
 const { hash } = new EventScope();
 
@@ -15,21 +15,21 @@ const { hash } = new EventScope();
  * @param children - Render prop that receives the current toggle state.
  * @returns JSX element rendered by the children function.
  */
-const EventToggleManagerWrapper = ({
+const ToggleController = ({
   initStatus = false,
   name,
   children,
 }: {
   initStatus?: boolean;
   name: string;
-  children: (params: IEventToggleManagerWrapperState) => JSX.Element;
+  children: (params: IToggleState) => JSX.Element;
 }) => {
   // Local toggle state exposed to children
-  const [state, setState] = useState<IEventToggleManagerWrapperState>({
+  const [state, setState] = useState<IToggleState>({
     status: initStatus,
     payload: undefined,
     toggle() {
-      eventToggleHandler({
+      toggleHandler({
         name,
       });
     },
@@ -67,7 +67,7 @@ const EventToggleManagerWrapper = ({
  * @param name - The unique name of the toggle item.
  * @param payload - Optional data to pass along with the toggle.
  */
-function eventToggleHandler({
+function toggleHandler({
   name,
   payload = undefined,
 }: {
@@ -81,4 +81,4 @@ function eventToggleHandler({
   });
 }
 
-export { EventToggleManagerWrapper, eventToggleHandler };
+export { ToggleController, toggleHandler };

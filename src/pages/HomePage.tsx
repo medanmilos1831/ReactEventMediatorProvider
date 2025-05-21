@@ -1,8 +1,5 @@
 import { Modal } from 'antd';
-import {
-  eventToggleHandler,
-  EventToggleManagerWrapper,
-} from '../EventToggleManager';
+import { toggleHandler, ToggleController } from '../EventToggleManager';
 import { logging } from 'scoped-observer';
 
 logging();
@@ -11,7 +8,7 @@ const DeepNestedComponent = () => {
     <>
       <button
         onClick={() => {
-          eventToggleHandler({
+          toggleHandler({
             name: 'one',
             payload: 1,
           });
@@ -31,7 +28,7 @@ const ModalComponent = () => {
 export default function HomePage() {
   return (
     <div>
-      <EventToggleManagerWrapper name="one" initStatus={true}>
+      <ToggleController name="one" initStatus={true}>
         {({ status, payload, toggle }) => {
           return (
             <Modal
@@ -40,7 +37,7 @@ export default function HomePage() {
                 toggle();
               }}
               onOk={() => {
-                eventToggleHandler({
+                toggleHandler({
                   name: 'two',
                   payload: 2,
                 });
@@ -50,8 +47,8 @@ export default function HomePage() {
             </Modal>
           );
         }}
-      </EventToggleManagerWrapper>
-      <EventToggleManagerWrapper name="two">
+      </ToggleController>
+      <ToggleController name="two">
         {({ status, payload, toggle }) => {
           return (
             <Modal
@@ -65,7 +62,7 @@ export default function HomePage() {
             </Modal>
           );
         }}
-      </EventToggleManagerWrapper>
+      </ToggleController>
       <DeepNestedComponent />
     </div>
   );

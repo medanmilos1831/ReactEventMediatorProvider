@@ -1,4 +1,4 @@
-export interface IEventToggleManagerWrapperState {
+export interface IToggleState {
   status: boolean;
   payload: any;
   toggle: () => void;
