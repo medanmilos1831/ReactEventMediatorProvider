@@ -1,17 +1,27 @@
 import { Modal } from 'antd';
 import { toggleHandler, ToggleController } from '../EventToggleManager';
 import { logging } from 'scoped-observer';
+class Nesto {
+  modalHandler() {
+    toggleHandler({
+      name: 'one',
+      payload: 2,
+    });
+  }
+}
 
 logging();
 const DeepNestedComponent = () => {
+  let r = new Nesto();
   return (
     <>
       <button
         onClick={() => {
-          toggleHandler({
-            name: 'one',
-            payload: 1,
-          });
+          r.modalHandler();
+          // toggleHandler({
+          //   name: 'one',
+          //   payload: 1,
+          // });
         }}
       >
         click me
