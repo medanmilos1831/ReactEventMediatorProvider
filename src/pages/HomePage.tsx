@@ -31,7 +31,7 @@ const ModalComponent = () => {
 export default function HomePage() {
   return (
     <div>
-      <EventToggleManagerWrapper name="one">
+      <EventToggleManagerWrapper name="one" initStatus={true}>
         {({ status, payload, toggle }) => {
           return (
             <Modal

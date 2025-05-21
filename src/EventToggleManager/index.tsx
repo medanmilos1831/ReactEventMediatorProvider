@@ -16,15 +16,17 @@ const { hash } = new EventScope();
  * @returns JSX element rendered by the children function.
  */
 const EventToggleManagerWrapper = ({
+  initStatus = false,
   name,
   children,
 }: {
+  initStatus?: boolean;
   name: string;
   children: (params: IEventToggleManagerWrapperState) => JSX.Element;
 }) => {
   // Local toggle state exposed to children
   const [state, setState] = useState<IEventToggleManagerWrapperState>({
-    status: false,
+    status: initStatus,
     payload: undefined,
     toggle() {
       eventToggleHandler({
