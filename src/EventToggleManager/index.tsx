@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
 import { dispatch, subscribe } from 'scoped-observer';
-import { EventToggleManager } from './EventToggleManager';
-import {
-  EVENT_NAME,
-  IEventToggleManagerWrapperState,
-  ON_OFF_SCOPE,
-} from './types';
+import { IEventToggleManagerWrapperState } from './types';
+import { EventScope } from './EventToggleManager';
+
+const { hash } = new EventScope();
 
 // Singleton instance of the toggle manager (internal, non-reactive)
-const eventToggleManager = new EventToggleManager();
 
 /**
  * A React component wrapper that connects a component to the global
@@ -36,35 +33,17 @@ const EventToggleManagerWrapper = ({
     },
   });
 
-  // One-time init that adds this toggle to the manager (non-reactive)
-  const [__, _] = useState(init);
-  function init() {
-    eventToggleManager.addItem({
-      [name]: state.status,
-    });
-  }
-
   useEffect(() => {
     // Subscribe to toggle events for this specific scope
     const unsubscribe = subscribe({
-      scope: `${ON_OFF_SCOPE}:${name}`,
-      eventName: EVENT_NAME,
-      callback(eventData: {
-        payload: {
-          status: IEventToggleManagerWrapperState['status'];
-          data: IEventToggleManagerWrapperState['payload'];
-        };
-      }) {
-        const { status, data } = eventData.payload;
-
-        // Update internal manager state
-        eventToggleManager.updateStatus(name, status);
-
+      scope: `${hash}`,
+      eventName: name,
+      callback({ payload }) {
         // Trigger local re-render with updated state
         setState((prev) => ({
           ...prev,
-          status,
-          payload: data,
+          status: !prev.status,
+          payload: payload,
         }));
       },
     });
@@ -94,12 +73,9 @@ function eventToggleHandler({
   payload?: any;
 }) {
   dispatch({
-    scope: `${ON_OFF_SCOPE}:${name}`,
-    eventName: EVENT_NAME,
-    payload: {
-      status: !eventToggleManager.getItem(name), // Flip current toggle state
-      data: payload,
-    },
+    scope: `${hash}`,
+    eventName: name,
+    payload,
   });
 }
 

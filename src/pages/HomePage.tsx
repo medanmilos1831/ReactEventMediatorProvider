@@ -1,9 +1,11 @@
 import { Modal } from 'antd';
 import {
-  EventToggleManagerWrapper,
   eventToggleHandler,
-} from 'scoped-observer-toggle-manager-react';
+  EventToggleManagerWrapper,
+} from '../EventToggleManager';
+import { logging } from 'scoped-observer';
 
+logging();
 const DeepNestedComponent = () => {
   return (
     <>
@@ -22,6 +24,7 @@ const DeepNestedComponent = () => {
 };
 
 const ModalComponent = () => {
+  console.log('RENDER', logging());
   return <>ModalComponent</>;
 };
 
@@ -39,8 +42,24 @@ export default function HomePage() {
               onOk={() => {
                 eventToggleHandler({
                   name: 'two',
+                  payload: 2,
                 });
               }}
+            >
+              <ModalComponent />
+            </Modal>
+          );
+        }}
+      </EventToggleManagerWrapper>
+      <EventToggleManagerWrapper name="two">
+        {({ status, payload, toggle }) => {
+          return (
+            <Modal
+              open={status}
+              onCancel={() => {
+                toggle();
+              }}
+              onOk={() => {}}
             >
               <ModalComponent />
             </Modal>
