@@ -1,79 +1,29 @@
-import { Modal } from 'antd';
-import { toggleHandler, ToggleController } from '../EventToggleManager';
-import { logging } from 'scoped-observer';
-class Nesto {
-  modalHandler() {
-    toggleHandler({
-      name: 'one',
-      payload: 2,
-    });
-  }
-}
-
-logging();
-const DeepNestedComponent = () => {
-  let r = new Nesto();
-  return (
-    <>
-      <button
-        onClick={() => {
-          r.modalHandler();
-          // toggleHandler({
-          //   name: 'one',
-          //   payload: 1,
-          // });
-        }}
-      >
-        click me
-      </button>
-    </>
-  );
-};
-
-const ModalComponent = () => {
-  console.log('RENDER', logging());
-  return <>ModalComponent</>;
-};
-
+import axios from 'axios';
+import { useQueryObserver } from '../observer-query-react';
+import { useState } from 'react';
 export default function HomePage() {
+  const [counter, setCounter] = useState(0);
+  const query = useQueryObserver({
+    name: 'pera',
+    queryPromise() {
+      return axios.get(
+        counter === 0
+          ? `https://api.escuelajs.co/api/v1/users`
+          : `https://api.escuelajs.co/api/v1/users/${counter}`
+      );
+    },
+    dependencies: [counter],
+  });
+  console.log('query', query);
   return (
     <div>
-      <ToggleController name="one" initStatus={true}>
-        {({ status, payload, toggle }) => {
-          return (
-            <Modal
-              open={status}
-              onCancel={() => {
-                toggle();
-              }}
-              onOk={() => {
-                toggleHandler({
-                  name: 'two',
-                  payload: 2,
-                });
-              }}
-            >
-              <ModalComponent />
-            </Modal>
-          );
+      <button
+        onClick={() => {
+          setCounter((prev) => prev + 1);
         }}
-      </ToggleController>
-      <ToggleController name="two">
-        {({ status, payload, toggle }) => {
-          return (
-            <Modal
-              open={status}
-              onCancel={() => {
-                toggle();
-              }}
-              onOk={() => {}}
-            >
-              <ModalComponent />
-            </Modal>
-          );
-        }}
-      </ToggleController>
-      <DeepNestedComponent />
+      >
+        click me {counter}
+      </button>
     </div>
   );
 }
