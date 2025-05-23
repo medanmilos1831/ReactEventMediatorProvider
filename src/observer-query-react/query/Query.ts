@@ -1,17 +1,25 @@
+import { IQuery, IQueryObserver } from './query.types';
+
 export class Query {
-  private hash!: string;
-  private name!: string;
+  name!: string;
+  data = undefined;
   queryPromise!: any;
   dependencies!: any;
-  private data = undefined;
   isLoading = true;
-  private isError = false;
-  private error = undefined;
+  isError = false;
+  error = undefined;
+  config = {
+    enabled: true,
+  };
 
-  constructor({ name, dependencies, queryPromise }: any, hash: string) {
-    this.hash = hash;
+  constructor({ name, dependencies, queryPromise, config }: IQueryObserver) {
+    this.config = {
+      ...this.config,
+      ...config,
+    };
     this.name = name;
-    this.dependencies = dependencies ? JSON.stringify(dependencies) : '';
+    this.dependencies = '';
     this.queryPromise = queryPromise;
+    this.isLoading = this.config.enabled;
   }
 }

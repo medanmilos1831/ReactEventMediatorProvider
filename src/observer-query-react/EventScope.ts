@@ -27,3 +27,7 @@ export class EventScope {
     return result;
   }
 }
+
+const { hash } = new EventScope();
+
+export { hash };
